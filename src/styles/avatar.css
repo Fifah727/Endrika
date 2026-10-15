@@ -1,0 +1,400 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   AVATAR : états pilotés par data-* sur le <svg>
+     data-state="code"      au travail, souriante, en musique (défaut)
+     data-state="hello"     survol / tap / activité « coucou » : te regarde et salue
+     data-activity="…"      code | dance | chill | wave  (choix de l'utilisateur)
+     data-wink="true"       clic : clin d'œil
+     data-motion="full"     force les animations complètes (prop forceMotion)
+     data-static="true"     aperçus et export PNG : aucune animation
+   Variables posées en JS : --nx / --ny (curseur, de -1 à 1), --tempo (vitesse)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.avatar {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 2px;
+  --av-spring: cubic-bezier(0.3, 1.5, 0.5, 1);
+  --av-smooth: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ── Ambiance (grands mouvements : remplacés en mode « réduire les animations ») ── */
+.av-head     { transform-origin: 200px 300px; }
+.av-hairback { transform-origin: 200px 300px; }
+.av-breathe  { transform-origin: 200px 400px; animation: av-breathe calc(5s * var(--tempo, 1)) ease-in-out infinite; }
+.av-typing   { animation: av-typing calc(1.2s * var(--tempo, 1)) ease-in-out infinite; }
+.av-float    { animation: av-float calc(5s * var(--tempo, 1)) ease-in-out infinite; }
+.av-card     { animation: av-float calc(6s * var(--tempo, 1)) ease-in-out infinite; }
+.av-leaf     { transform-origin: 385px 98px; animation: av-leaf calc(4.5s * var(--tempo, 1)) ease-in-out infinite; }
+.av-orbit    { transform-origin: 200px 212px; animation: av-orbit calc(50s * var(--tempo, 1)) linear infinite; }
+.av-steam    { animation: av-steam calc(3s * var(--tempo, 1)) ease-in-out infinite; }
+.av-steam--b { animation-delay: -1.5s; }
+
+/* Elle code en musique : la tête rebondit en rythme.
+   Les écouteurs et leurs câbles sont dans le groupe de la tête : ils suivent. */
+.avatar[data-state="code"] .av-head      { animation: av-bop calc(1.2s * var(--tempo, 1)) ease-in-out infinite; }
+.avatar[data-state="code"] .av-hairback  { animation: av-bop calc(1.2s * var(--tempo, 1)) ease-in-out infinite; animation-delay: -1.1s; }
+.avatar[data-state="hello"] .av-head     { animation: av-head calc(7s * var(--tempo, 1)) ease-in-out infinite; }
+.avatar[data-state="hello"] .av-hairback { animation: av-head calc(7s * var(--tempo, 1)) ease-in-out infinite; animation-delay: -6.7s; }
+
+/* ── Micro-animations toujours actives ──────────────────────────────────── */
+.av-eye    { transform-box: fill-box; transform-origin: center; transition: transform 0.12s; }
+.av-eye-l,
+.av-eye-r  { animation: av-blink 6s infinite; }
+.av-glint  { animation: av-glint 7s ease-in-out infinite; }
+.av-spark  { transform-box: fill-box; transform-origin: center; animation: av-twinkle 3.2s ease-in-out infinite; }
+.av-line   { transform-box: fill-box; transform-origin: left center; animation: av-type 2.2s ease-in-out infinite; }
+.av-caret  { animation: av-caret 1s steps(1) infinite; }
+
+/* ══════════════════════════ ÉTAT « CODE » (défaut) ═══════════════════════ */
+/* tête légèrement penchée vers l'écran ; en quittant le coucou,
+   elle attend un peu que le bras redescende */
+.av-pose {
+  transform-origin: 200px 300px;
+  transform: rotate(-0.5deg) translate(0, 3px);
+  transition: transform 0.6s var(--av-spring) 0.12s;
+}
+/* regard vers le bas, sur son écran */
+.av-look {
+  transform: translate(-0.5px, 3px);
+  transition: transform 0.5s var(--av-smooth) 0.1s;
+}
+/* sourcils relevés = enthousiaste et éveillée */
+.av-brows {
+  transform: translateY(-2px);
+  transition: transform 0.35s var(--av-smooth);
+}
+/* joues roses : elle sourit */
+.av-cheek { opacity: 0.32; transition: opacity 0.3s; }
+/* sourire doux (la bouche ne bouge jamais) */
+.av-mouth-n { opacity: 1; transition: opacity 0.2s; }
+.av-mouth-s { opacity: 0; transition: opacity 0.2s; }
+/* notes de musique */
+.av-music { opacity: 1; transition: opacity 0.3s; }
+.av-mnote { animation: av-mnote 3s ease-in-out infinite; }
+.av-mnote--b { animation-delay: -1.5s; }
+/* bras : caché derrière le bureau ; il part en premier quand elle arrête de saluer */
+.av-arm {
+  transform: translateY(240px);
+  transition: transform 0.45s var(--av-spring);
+}
+.av-hand { transform-origin: 340px 266px; }
+.av-wsp  { opacity: 0; transform-box: fill-box; transform-origin: center; }
+/* bulle cachée */
+.av-bubble {
+  transform-origin: 130px 62px;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.2s, transform 0.3s var(--av-smooth);
+}
+/* idée : ampoule bien visible, toutes les 10 s */
+.av-idea-wrap { opacity: 1; transition: opacity 0.2s; }
+.av-idea {
+  transform-origin: 200px 40px;
+  opacity: 0;
+  animation: av-idea 10s ease-in-out 1.5s infinite;
+}
+.av-aha { animation: av-aha 10s ease-in-out 1.5s infinite; }
+/* étoile du clin d'œil */
+.av-pop {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* ══════════════════════════ ÉTAT « HELLO » ════════════════════════════════ */
+/* la tête se redresse et se tourne un peu vers le curseur ; les yeux le suivent */
+.avatar[data-state="hello"] .av-pose {
+  transform: rotate(calc(2deg + var(--nx, 0) * 2.5deg)) translate(0, -3px);
+  transition: transform 0.35s var(--av-smooth);
+}
+.avatar[data-state="hello"] .av-look {
+  transform: translate(calc(var(--nx, 0) * 3px), calc(var(--ny, 0) * 2px));
+  transition: transform 0.18s ease-out;
+}
+.avatar[data-state="hello"] .av-brows { transform: translateY(-3px); }
+.avatar[data-state="hello"] .av-cheek { opacity: 0.38; }
+/* sourire élargi, sans dents */
+.avatar[data-state="hello"] .av-mouth-n { opacity: 0; }
+.avatar[data-state="hello"] .av-mouth-s { opacity: 1; }
+.avatar[data-state="hello"] .av-music { opacity: 0; }
+/* le bras monte de derrière le bureau, puis la main salue */
+.avatar[data-state="hello"] .av-arm {
+  transform: translateY(0);
+  transition-delay: 0.18s;
+}
+.avatar[data-state="hello"] .av-wsp {
+  animation: av-twinkle 0.9s ease-in-out 0.6s infinite;
+}
+.avatar[data-state="hello"] .av-bubble {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.25s 0.3s, transform 0.4s var(--av-spring) 0.3s;
+}
+.avatar[data-state="hello"] .av-idea-wrap { opacity: 0; }
+/* elle arrête de coder pour dire bonjour */
+.avatar[data-state="hello"] .av-line { animation-play-state: paused; }
+
+/* ── Clin d'œil (clic) ──────────────────────────────────────────────────── */
+.avatar[data-wink="true"] .av-eye-r {
+  animation: none;
+  transform: scaleY(0.08);
+}
+.avatar[data-wink="true"] .av-pop {
+  animation: av-pop 0.7s var(--av-spring) both;
+}
+
+/* ══════════════════════════ ACTIVITÉS ═════════════════════════════════════ */
+/* Danser : le buste et la tête partagent exactement la même oscillation
+   autour du bas du buste, pour rester collés l'un à l'autre. */
+.avatar[data-activity="dance"] .av-breathe {
+  transform-origin: 200px 400px;
+  animation: av-dance calc(1.6s * var(--tempo, 1)) ease-in-out infinite;
+}
+.avatar[data-activity="dance"][data-state="code"] .av-head,
+.avatar[data-activity="dance"][data-state="code"] .av-hairback {
+  transform-origin: 200px 400px;
+  animation: av-dance calc(1.6s * var(--tempo, 1)) ease-in-out infinite;
+}
+/* pendant un coucou, le buste se calme */
+.avatar[data-activity="dance"][data-state="hello"] .av-breathe {
+  animation: av-breathe calc(5s * var(--tempo, 1)) ease-in-out infinite;
+}
+
+/* Se détendre : respiration lente, pas de frappe, ni notes */
+.avatar[data-activity="chill"] .av-typing { animation: none; }
+.avatar[data-activity="chill"] .av-breathe { animation-duration: calc(7s * var(--tempo, 1)); }
+.avatar[data-activity="chill"][data-state="code"] .av-head,
+.avatar[data-activity="chill"][data-state="code"] .av-hairback {
+  animation: av-chill calc(8s * var(--tempo, 1)) ease-in-out infinite;
+}
+.avatar[data-activity="chill"][data-state="code"] .av-hairback { animation-delay: -0.4s; }
+.avatar[data-activity="chill"] .av-music { opacity: 0; }
+.avatar[data-activity="chill"] .av-line { animation-duration: 6s; }
+
+/* ══════════════════════════ KEYFRAMES ═════════════════════════════════════ */
+@keyframes av-head {
+  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+  50%      { transform: translateY(-3px) rotate(1.2deg); }
+}
+/* « head bop » : deux rebonds par cycle */
+@keyframes av-bop {
+  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+  25%      { transform: translateY(-3px) rotate(0.2deg); }
+  50%      { transform: translateY(0) rotate(1.4deg); }
+  75%      { transform: translateY(-3px) rotate(0.2deg); }
+}
+@keyframes av-dance {
+  0%, 100% { transform: translateY(0) rotate(-2.2deg); }
+  25%      { transform: translateY(-5px) rotate(0deg); }
+  50%      { transform: translateY(0) rotate(2.2deg); }
+  75%      { transform: translateY(-5px) rotate(0deg); }
+}
+@keyframes av-chill {
+  0%, 100% { transform: translateY(0) rotate(-0.8deg); }
+  50%      { transform: translateY(-2px) rotate(0.8deg); }
+}
+@keyframes av-breathe {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(1.012); }
+}
+/* petites secousses des épaules : elle tape au clavier */
+@keyframes av-typing {
+  0%, 100% { transform: translateY(0); }
+  20%      { transform: translateY(0.9px); }
+  40%      { transform: translateY(0); }
+  60%      { transform: translateY(0.6px); }
+  80%      { transform: translateY(0); }
+}
+@keyframes av-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes av-leaf {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+@keyframes av-orbit {
+  to { transform: rotate(360deg); }
+}
+@keyframes av-steam {
+  0%   { opacity: 0;    transform: translate(0, 8px); }
+  30%  { opacity: 0.95; transform: translate(-2px, 0); }
+  65%  { opacity: 0.7;  transform: translate(2px, -6px); }
+  100% { opacity: 0;    transform: translate(-1px, -13px); }
+}
+@keyframes av-blink {
+  0%, 18%, 24%, 78%, 84%, 100% { transform: scaleY(1); }
+  21%, 81%                     { transform: scaleY(0.08); }
+}
+@keyframes av-glint {
+  0%, 60%   { transform: translateX(110px); opacity: 0; }
+  64%       { opacity: 0.7; }
+  90%       { transform: translateX(300px); opacity: 0.7; }
+  94%, 100% { transform: translateX(300px); opacity: 0; }
+}
+@keyframes av-twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.6); }
+  50%      { opacity: 1;   transform: scale(1); }
+}
+@keyframes av-type {
+  0%       { transform: scaleX(0); }
+  30%, 80% { transform: scaleX(1); }
+  100%     { transform: scaleX(0); }
+}
+@keyframes av-caret {
+  50% { opacity: 0; }
+}
+@keyframes av-wave-loop {
+  0%, 100% { transform: rotate(-12deg); }
+  50%      { transform: rotate(15deg); }
+}
+@keyframes av-mnote {
+  0%   { opacity: 0; transform: translate(0, 6px) scale(0.6); }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-6px, -30px) scale(1); }
+}
+/* idée : visible ~4 s sur chaque cycle de 10 s */
+@keyframes av-idea {
+  0%, 35%   { opacity: 0; transform: translateY(10px) scale(0.4); }
+  41%       { opacity: 1; transform: translateY(-2px) scale(1.18); }
+  45%       { opacity: 1; transform: scale(1); }
+  70%       { opacity: 1; transform: scale(1); }
+  78%, 100% { opacity: 0; transform: translateY(-5px) scale(0.8); }
+}
+@keyframes av-aha {
+  0%, 36%, 76%, 100% { transform: translateY(0); }
+  41%, 70%           { transform: translateY(-4px); }
+}
+@keyframes av-pop {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-30deg); }
+  40%  { opacity: 1; transform: scale(1.2) rotate(0deg); }
+  100% { opacity: 0; transform: scale(1) rotate(20deg); }
+}
+
+/* ══════════════════════════ REFLETS D'ÉCRAN DANS LES LUNETTES ═════════════ */
+.avatar .av-reflect { transition: opacity 0.3s ease; }
+/* quand elle te regarde, elle ne fixe plus son écran */
+.avatar[data-state="hello"] .av-reflect { opacity: 0; }
+.avatar .av-reflect rect {
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+}
+@keyframes av-reflect-type {
+  0%       { transform: scaleX(0.15); }
+  45%, 100% { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .avatar .av-reflect rect { animation: av-reflect-type 2.6s steps(8, end) infinite; }
+}
+.avatar[data-motion="full"] .av-reflect rect { animation: av-reflect-type 2.6s steps(8, end) infinite; }
+
+/* ── Coucou : la main salue en continu tant que l'état « hello » dure ── */
+.avatar[data-state="hello"] .av-hand {
+  transform-box: view-box;
+  transform-origin: 340px 264px;
+  animation: av-wave-loop calc(0.85s * var(--tempo, 1)) ease-in-out infinite;
+}
+
+/* ══════════════════════════ « RÉDUIRE LES ANIMATIONS » ═════════════════════
+   Si le système demande moins de mouvement :
+   - plus de rebonds, balancements, danse, orbite, vapeur, notes ;
+   - MAIS le coucou et l'idée restent visibles, en version douce : fondu à la
+     place du glissement, petit salut de la main au lieu du grand.
+   Pour voir la version complète malgré ce réglage : <Avatar forceMotion />. */
+@media (prefers-reduced-motion: reduce) {
+  .avatar:not([data-motion="full"]) .av-head,
+  .avatar:not([data-motion="full"]) .av-hairback,
+  .avatar:not([data-motion="full"]) .av-breathe,
+  .avatar:not([data-motion="full"]) .av-typing,
+  .avatar:not([data-motion="full"]) .av-float,
+  .avatar:not([data-motion="full"]) .av-card,
+  .avatar:not([data-motion="full"]) .av-leaf,
+  .avatar:not([data-motion="full"]) .av-orbit,
+  .avatar:not([data-motion="full"]) .av-aha,
+  .avatar:not([data-motion="full"]) .av-mnote,
+  .avatar:not([data-motion="full"])[data-state="code"] .av-head,
+  .avatar:not([data-motion="full"])[data-state="code"] .av-hairback,
+  .avatar:not([data-motion="full"])[data-state="hello"] .av-head,
+  .avatar:not([data-motion="full"])[data-state="hello"] .av-hairback,
+  .avatar:not([data-motion="full"])[data-activity="dance"] .av-breathe,
+  .avatar:not([data-motion="full"])[data-activity="dance"][data-state="code"] .av-head,
+  .avatar:not([data-motion="full"])[data-activity="dance"][data-state="code"] .av-hairback,
+  .avatar:not([data-motion="full"])[data-activity="dance"][data-state="hello"] .av-breathe,
+  .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-head,
+  .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-hairback {
+    animation: none;
+  }
+  .avatar:not([data-motion="full"]) .av-steam { animation: av-steam-soft 3.2s ease-in-out infinite; }
+  .avatar:not([data-motion="full"]) .av-steam--b { animation-delay: -1.6s; }
+  .avatar:not([data-motion="full"]) .av-music { display: none; }
+
+  .avatar:not([data-motion="full"]) .av-pose { transition-duration: 0.01s; transition-delay: 0s; }
+
+  /* le bras apparaît en fondu, sans glisser */
+  .avatar:not([data-motion="full"]) .av-arm {
+    transform: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .avatar:not([data-motion="full"])[data-state="hello"] .av-arm {
+    transform: none;
+    opacity: 1;
+    transition-delay: 0s;
+  }
+  /* petit salut de la main : 4 allers-retours, amplitude faible */
+  .avatar:not([data-motion="full"])[data-state="hello"] .av-hand {
+    animation: av-wave-soft 0.8s ease-in-out 0.35s 4 alternate both;
+  }
+  .avatar:not([data-motion="full"])[data-state="hello"] .av-wsp {
+    animation: av-fade-soft 1.6s ease-in-out 0.4s 2 both;
+  }
+
+  /* l'ampoule apparaît en fondu, toutes les 10 s */
+  .avatar:not([data-motion="full"]) .av-idea {
+    transform: none;
+    animation: av-idea-fade 10s ease-in-out 1.5s infinite;
+  }
+
+  .avatar:not([data-motion="full"]) .av-bubble {
+    transform: none;
+    transition: opacity 0.3s;
+  }
+  .avatar:not([data-motion="full"])[data-state="hello"] .av-bubble {
+    transform: none;
+    transition: opacity 0.3s 0.2s;
+  }
+
+  @keyframes av-steam-soft {
+    0%, 100% { opacity: 0.1; transform: translateY(0); }
+    50%      { opacity: 0.95; transform: translateY(-4px); }
+  }
+  @keyframes av-wave-soft {
+    from { transform: rotate(-5deg); }
+    to   { transform: rotate(5deg); }
+  }
+  @keyframes av-fade-soft {
+    0%, 100% { opacity: 0; }
+    50%      { opacity: 0.9; }
+  }
+  @keyframes av-idea-fade {
+    0%, 35%   { opacity: 0; }
+    42%, 70%  { opacity: 1; }
+    78%, 100% { opacity: 0; }
+  }
+}
+
+/* ── Performance : hors écran, toutes les animations sont en pause ── */
+.avatar.avatar[data-offscreen="true"],
+.avatar.avatar[data-offscreen="true"] * {
+  animation-play-state: paused !important;
+}
+
+/* ── Aperçus et export PNG : image fixe, sans animation ni transition ── */
+.avatar[data-static="true"],
+.avatar[data-static="true"] * {
+  animation: none !important;
+  transition: none !important;
+}
