@@ -1,52 +1,54 @@
 # Endrika
 
-Site qui permet de **créer un avatar animé par sélection** (teint, visage, cheveux, accessoires, tenue, décor, animation), sans prompt. L'avatar est un SVG animé en CSS, rendu par React.
+**Donne vie à ton avatar.**
 
-- Aperçu en direct, bouton **Aléatoire**, **Réinitialiser**
-- **Copier le lien** : tous les choix sont dans l'URL (`#hair=boucles&skin=ebene…`)
-- **Télécharger** en SVG animé (le CSS est embarqué) ou en PNG 1024 px
-- Respecte « réduire les animations » du système
+Endrika est un projet de création d'avatars personnalisés. Il explore
+une façon simple et accessible de composer une identité visuelle à son
+image.
 
-## Lancer en local
+Le projet évolue au fil du temps : ses fonctionnalités, ses possibilités
+de personnalisation et ses formats de sortie peuvent changer.
 
-```bash
-npm install
-npm run dev        # http://localhost:5173
-npm run build      # génère dist/
-```
+## À propos du projet
 
-## Déployer sur GitHub Pages
+Endrika a pour objectif de rendre la création d'avatars intuitive et
+créative, en laissant chacun expérimenter avec différentes apparences et
+styles.
 
-1. Crée un dépôt GitHub et pousse le projet sur la branche `main`.
-2. Dans **Settings → Pages**, choisis **Source : GitHub Actions**.
-3. Chaque push sur `main` lance `.github/workflows/deploy.yml` (build + déploiement).
-4. L'adresse sera `https://<pseudo>.github.io/<depot>/`. Colle-la dans le bouton « Voir le demo » du projet, dans le portfolio.
+## Découvrir le projet
 
-`vite.config.js` utilise `base: "./"` : aucune adresse à configurer, et l'état vit dans le `#hash`, donc pas de routeur ni de 404.
+- **Démo :** à ajouter lorsque le lien public est disponible.
+- **Code source :** explore ce dépôt pour suivre le développement du
+  projet.
 
-## Structure
+## Démarrer
 
-```
-src/
-  avatar/
-    catalog.js        toutes les options, palettes et panneaux de l'interface
-    config.js         validation, hasard, lien partageable, stockage local
-    color.js          dérive ombres et reflets d'une couleur de base
-    Avatar.jsx        assemble les calques selon la config + interactions
-    parts/            Hair, Face, Glasses, Outfit, Accessories, Scene (décor)
-  styles/avatar.css   états, activités, tempo, accessibilité
-  styles/Craft.css   interface
-  ui/                 Options (aperçus, pastilles…), exporters (SVG, PNG, lien)
-```
+Les instructions d'installation et de lancement seront documentées ici à
+mesure que le projet évoluera.
 
-## Ajouter une option
+## Contribuer
 
-1. Ajoute-la dans la liste correspondante de `src/avatar/catalog.js` (ex. `HAIRS`).
-2. Dessine la variante dans `src/avatar/parts/` (ex. une entrée de `STYLES` dans `Hair.jsx`).
-3. C'est tout : l'aperçu, le hasard, la validation du lien et l'export la prennent en compte.
+Les idées, suggestions et signalements de problèmes sont les bienvenus.
+Pour contribuer :
 
-Règles de dessin : viewBox 400 × 400, contour du visage commun (x 134→266, y 96→260), points d'ancrage des animations inchangés (tête `200 300`, bras `340 264`). Pour une coiffure, fournir un calque `back` (derrière le buste) et un calque `front` (par-dessus le visage).
+1.  Consulte les issues existantes avant de signaler un problème ou de
+    proposer une amélioration.
+2.  Décris clairement ton idée ou le comportement rencontré.
+3.  Si tu proposes une modification du code, explique son objectif et
+    son fonctionnement.
 
-## Pistes
+## Évolution
 
-Export animé en WebM/GIF, plus de coiffures et de tenues, chapeaux et bijoux colorables, accessoires de bureau au choix (livre, plante, chat).
+Endrika est un projet en évolution. La présentation ci-dessus décrit son
+objectif général et n'est pas une liste exhaustive ou définitive de ses
+fonctionnalités.
+
+## Licence
+
+Ce projet est distribué sous la licence MIT. Consulte le fichier
+[`LICENSE`](LICENSE) pour lire les conditions d’utilisation, de modification
+et de redistribution.
+
+---
+
+_Endrika --- un espace pour imaginer et créer des avatars à son image._
