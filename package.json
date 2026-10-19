@@ -1,20 +1,23 @@
 {
   "homepage": "https://Fifah727.github.io/Endrika/",
-  "name": "avatar-studio",
+  "name": "endrika",
   "private": true,
-  "version": "1.0.0",
-  "description": "Créateur d'avatars animés par sélection (SVG + React, déployable sur GitHub Pages)",
+  "version": "2.0.0",
+  "description": "Endrika : crée ton avatar animé par sélection (SVG + React), exporte en PNG, GIF, MP4 ou SVG animé",
   "type": "module",
   "scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "preview": "vite preview",
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d dist"
-},
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
   "dependencies": {
     "@fontsource-variable/instrument-sans": "^5.1.0",
     "@fontsource-variable/jetbrains-mono": "^5.1.0",
+    "@fontsource/instrument-serif": "^5.3.0",
+    "gifenc": "^1.0.3",
+    "mp4-muxer": "^5.2.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

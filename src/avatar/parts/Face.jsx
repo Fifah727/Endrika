@@ -9,6 +9,10 @@ const FACE_PATHS = {
     "M134 172 C134 122 164 96 200 96 C236 96 266 122 266 172 C266 232 238 264 200 264 C162 264 134 232 134 172 Z",
   carree:
     "M134 172 C134 122 164 96 200 96 C236 96 266 122 266 172 L264 214 C262 242 240 258 200 258 C160 258 138 242 136 214 Z",
+  coeur:
+    "M134 172 C134 122 164 96 200 96 C236 96 266 122 266 172 C266 214 238 244 200 266 C162 244 134 214 134 172 Z",
+  longue:
+    "M134 172 C134 122 164 96 200 96 C236 96 266 122 266 172 C266 236 240 276 200 276 C160 276 134 236 134 172 Z",
 };
 
 export function Ears({ skin }) {
@@ -74,49 +78,153 @@ export function FacialHair({ kind, tone }) {
   );
 }
 
-export function Mouth({ skin }) {
-  const color = lum(skin.face) < 0.3 ? "#D58A7C" : "#9A4A4A";
+const INK = "#1A0F0B";
+const INSIDE = "#6E2A30";
+const TONGUE = "#E98A8A";
+
+// Chaque expression fournit une bouche « calme » (n) et une version élargie (s) affichée
+// quand l'avatar te salue : avatar.css bascule de l'une à l'autre.
+const mouths = (c) => ({
+  sourire: {
+    n: <path d="M184 219 Q200 234 216 219" fill="none" stroke={c} strokeWidth="4.4" strokeLinecap="round" />,
+    s: <path d="M182 217 Q200 237 218 217" fill="none" stroke={c} strokeWidth="4.6" strokeLinecap="round" />,
+  },
+  grand: {
+    n: <><path d="M182 216 Q200 246 218 216 Z" fill={INSIDE} stroke={c} strokeWidth="3.4" strokeLinejoin="round" /><path d="M191 232 Q200 226 209 232 Q200 241 191 232 Z" fill={TONGUE} /></>,
+    s: <><path d="M179 215 Q200 250 221 215 Z" fill={INSIDE} stroke={c} strokeWidth="3.6" strokeLinejoin="round" /><path d="M190 234 Q200 227 210 234 Q200 244 190 234 Z" fill={TONGUE} /></>,
+  },
+  neutre: {
+    n: <path d="M188 224 H212" fill="none" stroke={c} strokeWidth="4.2" strokeLinecap="round" />,
+    s: <path d="M186 222 Q200 230 214 222" fill="none" stroke={c} strokeWidth="4.4" strokeLinecap="round" />,
+  },
+  malin: {
+    n: <path d="M184 225 Q202 229 218 215" fill="none" stroke={c} strokeWidth="4.4" strokeLinecap="round" />,
+    s: <path d="M182 225 Q202 233 220 213" fill="none" stroke={c} strokeWidth="4.6" strokeLinecap="round" />,
+  },
+  surprise: {
+    n: <ellipse cx="200" cy="226" rx="6" ry="8" fill={INSIDE} stroke={c} strokeWidth="3" />,
+    s: <ellipse cx="200" cy="227" rx="7" ry="9.5" fill={INSIDE} stroke={c} strokeWidth="3" />,
+  },
+  rieur: {
+    n: <><path d="M180 214 H220 Q220 242 200 242 Q180 242 180 214 Z" fill={INSIDE} stroke={c} strokeWidth="3.4" strokeLinejoin="round" /><path d="M189 237 Q200 228 211 237 Q200 244 189 237 Z" fill={TONGUE} /></>,
+    s: <><path d="M178 213 H222 Q222 246 200 246 Q178 246 178 213 Z" fill={INSIDE} stroke={c} strokeWidth="3.6" strokeLinejoin="round" /><path d="M188 240 Q200 229 212 240 Q200 248 188 240 Z" fill={TONGUE} /></>,
+  },
+  reveur: {
+    n: <path d="M190 222 Q200 229 210 222" fill="none" stroke={c} strokeWidth="4" strokeLinecap="round" />,
+    s: <path d="M187 220 Q200 232 213 220" fill="none" stroke={c} strokeWidth="4.4" strokeLinecap="round" />,
+  },
+  etoiles: {
+    n: <path d="M186 217 Q200 238 214 217 Z" fill={INSIDE} stroke={c} strokeWidth="3.2" strokeLinejoin="round" />,
+    s: <path d="M183 216 Q200 242 217 216 Z" fill={INSIDE} stroke={c} strokeWidth="3.4" strokeLinejoin="round" />,
+  },
+});
+
+export function Mouth({ skin, expression = "sourire", lip }) {
+  const c = lip ?? (lum(skin.face) < 0.3 ? "#D58A7C" : "#9A4A4A");
+  const m = mouths(c)[expression] ?? mouths(c).sourire;
   return (
     <>
-      {/* bouche : toujours un sourire, sans dents. Doux en codant, élargi au survol. */}
-      <g className="av-mouth-n">
-        <path d="M184 219 Q200 234 216 219" fill="none" stroke={color} strokeWidth="4.4" strokeLinecap="round" />
-      </g>
-      <g className="av-mouth-s">
-        <path d="M182 217 Q200 237 218 217" fill="none" stroke={color} strokeWidth="4.6" strokeLinecap="round" />
-      </g>
+      <g className="av-mouth-n">{m.n}</g>
+      <g className="av-mouth-s">{m.s}</g>
     </>
   );
 }
 
-export function Brows({ tone }) {
+const BROWS = {
+  sourire: ["M146 146 Q164 136 188 144", "M212 144 Q236 136 254 146"],
+  grand: ["M146 145 Q164 134 188 142", "M212 142 Q236 134 254 145"],
+  neutre: ["M146 147 Q166 143 188 146", "M212 146 Q234 143 254 147"],
+  malin: ["M146 149 Q164 143 188 149", "M212 138 Q236 128 254 140"],
+  surprise: ["M146 139 Q164 127 188 135", "M212 135 Q236 127 254 139"],
+  rieur: ["M146 144 Q164 133 188 141", "M212 141 Q236 133 254 144"],
+  reveur: ["M146 144 Q166 139 188 147", "M212 147 Q234 139 254 144"],
+  etoiles: ["M146 143 Q164 131 188 139", "M212 139 Q236 131 254 143"],
+};
+
+export function Brows({ tone, expression = "sourire" }) {
+  const [l, r] = BROWS[expression] ?? BROWS.sourire;
   return (
     <g className="av-brows" fill="none" stroke={tone.brow} strokeWidth="3.4" strokeLinecap="round">
       <g className="av-aha">
-        <path d="M146 146 Q164 136 188 144" />
-        <path d="M212 144 Q236 136 254 146" />
+        <path d={l} />
+        <path d={r} />
       </g>
     </g>
   );
 }
 
-export function Eyes({ color }) {
+const EYE_KIND = { rieur: "happy", reveur: "sleepy", etoiles: "star" };
+const STAR = "M0 -9 l2.6 6.2 6.6 .6 -5 4.4 1.6 6.6 -5.8 -3.5 -5.8 3.5 1.6 -6.6 -5 -4.4 6.6 -.6z";
+
+function Eye({ cx, side, color, kind, lid }) {
+  const dir = side === "l" ? 1 : -1;
+  if (kind === "happy") {
+    return <path d={`M${cx - 10} 177 Q${cx} 163 ${cx + 10} 177`} fill="none" stroke={INK} strokeWidth="3.6" strokeLinecap="round" />;
+  }
+  return (
+    <>
+      <ellipse cx={cx} cy="173" rx="9" ry="8.5" fill={color} />
+      <circle cx={cx} cy="173" r="4.8" fill={INK} />
+      {kind === "star" ? (
+        <path d={STAR} transform={`translate(${cx} 172) scale(.9)`} fill="#FFE27A" />
+      ) : (
+        <>
+          <circle cx={cx - 3 * dir} cy="170" r="2.6" fill="#fff" />
+          <circle cx={cx + 3 * dir} cy="176" r="1.2" fill="#fff" opacity=".6" />
+        </>
+      )}
+      <path d={`M${cx - 10} 168 Q${cx} 160 ${cx + 11} 168 M${cx - 10 * dir} 168 l${-3 * dir} -2`} fill="none" stroke={INK} strokeWidth="2.4" strokeLinecap="round" />
+      {kind === "sleepy" && (
+        <>
+          <path d={`M${cx - 10} 173 H${cx + 11} V157 H${cx - 10} Z`} fill={lid} />
+          <path d={`M${cx - 10} 173 Q${cx} 177 ${cx + 11} 173`} fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round" />
+        </>
+      )}
+    </>
+  );
+}
+
+export function Eyes({ color, expression = "sourire", skin }) {
+  const kind = EYE_KIND[expression] ?? "open";
   return (
     <g className="av-look">
-      <g className="av-eye av-eye-l">
-        <ellipse cx="166" cy="173" rx="9" ry="8.5" fill={color} />
-        <circle cx="166" cy="173" r="4.8" fill="#1A0F0B" />
-        <circle cx="163" cy="170" r="2.6" fill="#fff" />
-        <circle cx="169" cy="176" r="1.2" fill="#fff" opacity=".6" />
-        <path d="M156 168 Q166 160 177 168 M156 168 l-3 -2" fill="none" stroke="#1A0F0B" strokeWidth="2.4" strokeLinecap="round" />
-      </g>
-      <g className="av-eye av-eye-r">
-        <ellipse cx="234" cy="173" rx="9" ry="8.5" fill={color} />
-        <circle cx="234" cy="173" r="4.8" fill="#1A0F0B" />
-        <circle cx="231" cy="170" r="2.6" fill="#fff" />
-        <circle cx="237" cy="176" r="1.2" fill="#fff" opacity=".6" />
-        <path d="M223 168 Q234 160 244 168 M244 168 l3 -2" fill="none" stroke="#1A0F0B" strokeWidth="2.4" strokeLinecap="round" />
-      </g>
+      <g className="av-eye av-eye-l"><Eye cx={166} side="l" color={color} kind={kind} lid={skin.face} /></g>
+      <g className="av-eye av-eye-r"><Eye cx={234} side="r" color={color} kind={kind} lid={skin.face} /></g>
     </g>
   );
+}
+
+/** Petits détails de visage : grain de beauté, stickers, paillettes, eye-liner. */
+export function FaceArt({ kind, skin }) {
+  if (kind === "grain") return <circle cx="224" cy="206" r="2.3" fill="#2A1A12" opacity=".8" />;
+  if (kind === "etoiles") {
+    return (
+      <g fill="#FFD25E" stroke="#E0A92E" strokeWidth=".8" strokeLinejoin="round">
+        <path d="M0 -8 l2.2 5.4 5.8 .5 -4.4 3.8 1.4 5.7 -5 -3 -5 3 1.4 -5.7 -4.4 -3.8 5.8 -.5z" transform="translate(150 206)" />
+        <path d="M0 -6 l1.7 4.1 4.4 .4 -3.3 2.9 1 4.3 -3.8 -2.3 -3.8 2.3 1 -4.3 -3.3 -2.9 4.4 -.4z" transform="translate(248 212)" />
+      </g>
+    );
+  }
+  if (kind === "coeur") {
+    return <path d="M0 3 C-9 -4 -5 -10 0 -6 C5 -10 9 -4 0 3 Z" transform="translate(152 206)" fill="#F4739B" stroke="#D64F7E" strokeWidth=".8" strokeLinejoin="round" />;
+  }
+  if (kind === "paillettes") {
+    const dots = [[150, 190, "#FFE08A"], [158, 197, "#9FF0D8"], [170, 190, "#FF9BD0"], [250, 190, "#FFE08A"], [242, 197, "#9FF0D8"], [230, 190, "#FF9BD0"], [162, 203, "#FFE08A"], [238, 203, "#FF9BD0"]];
+    return (
+      <g>
+        {dots.map(([x, y, c], i) => (
+          <circle key={i} className="av-spark" style={{ animationDelay: `${-i * 0.4}s` }} cx={x} cy={y} r={i % 3 === 0 ? 2 : 1.4} fill={c} />
+        ))}
+      </g>
+    );
+  }
+  if (kind === "eyeliner") {
+    return (
+      <g fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round">
+        <path d="M156 168 L148 161" />
+        <path d="M244 168 L252 161" />
+      </g>
+    );
+  }
+  return null;
 }

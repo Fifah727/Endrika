@@ -298,6 +298,82 @@
   animation: av-wave-loop calc(0.85s * var(--tempo, 1)) ease-in-out infinite;
 }
 
+/* ══════════════════════════ ACTIVITÉS SUPPLÉMENTAIRES ═════════════════════ */
+/* Se concentrer : tête penchée sur le travail, regard baissé, frappe plus vive */
+.avatar[data-activity="focus"][data-state="code"] .av-pose { transform: rotate(-1.2deg) translate(0, 8px); }
+.avatar[data-activity="focus"][data-state="code"] .av-look { transform: translate(-0.5px, 5px); }
+.avatar[data-activity="focus"] .av-typing { animation-duration: calc(0.8s * var(--tempo, 1)); }
+.avatar[data-activity="focus"] .av-music { opacity: 0; }
+.avatar[data-activity="focus"][data-state="code"] .av-head,
+.avatar[data-activity="focus"][data-state="code"] .av-hairback {
+  animation: av-chill calc(6s * var(--tempo, 1)) ease-in-out infinite;
+}
+
+/* Réfléchir : les idées jaillissent, sourcils relevés, tête de côté */
+.avatar[data-activity="think"][data-state="code"] .av-pose { transform: rotate(3.4deg) translate(3px, -1px); }
+.avatar[data-activity="think"][data-state="code"] .av-look { transform: translate(3px, -2px); }
+.avatar[data-activity="think"][data-state="code"] .av-brows { transform: translateY(-4px); }
+.avatar[data-activity="think"] .av-idea,
+.avatar[data-activity="think"] .av-aha { animation-duration: calc(5s * var(--tempo, 1)); }
+.avatar[data-activity="think"] .av-music { opacity: 0; }
+.avatar[data-activity="think"][data-state="code"] .av-head,
+.avatar[data-activity="think"][data-state="code"] .av-hairback {
+  animation: av-chill calc(7s * var(--tempo, 1)) ease-in-out infinite;
+}
+
+/* Fêter ça : coucou permanent + rebonds (le buste et la tête sautent ensemble) */
+.avatar[data-activity="celebrate"] .av-breathe,
+.avatar[data-activity="celebrate"] .av-head,
+.avatar[data-activity="celebrate"] .av-hairback {
+  animation: av-bounce calc(0.8s * var(--tempo, 1)) ease-in-out infinite;
+}
+
+@keyframes av-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* ── Effets décoratifs (particules) ─────────────────────────────────────── */
+.av-fx--fall    { animation: av-fall 9s linear infinite; }
+.av-fx--rise    { animation: av-rise 9s linear infinite; }
+.av-fx--drift   { animation: av-drift 8s ease-in-out infinite; }
+.av-fx--twinkle { animation: av-twinkle 3s ease-in-out infinite; }
+
+@keyframes av-fall {
+  0%   { transform: translate(0, -60px) rotate(0deg); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translate(var(--dx, 0px), 440px) rotate(var(--rot, 180deg)); opacity: 0; }
+}
+@keyframes av-rise {
+  0%   { transform: translate(0, 50px) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translate(var(--dx, 0px), -440px) rotate(var(--rot, 40deg)); opacity: 0; }
+}
+@keyframes av-drift {
+  0%, 100% { transform: translate(0, 0); opacity: 0.25; }
+  25%      { transform: translate(var(--dx, 10px), -12px); opacity: 1; }
+  50%      { transform: translate(calc(var(--dx, 10px) * -0.6), 8px); opacity: 0.4; }
+  75%      { transform: translate(calc(var(--dx, 10px) * 0.4), -6px); opacity: 1; }
+}
+
+/* ── Animations propres aux objets du bureau et du décor ─────────────────── */
+.av-write { stroke-dasharray: 1; animation: av-write 4s ease-in-out infinite; }
+.av-draw  { stroke-dasharray: 1; animation: av-write 5s ease-in-out infinite; }
+.av-key   { animation: av-key 4s ease-in-out infinite; }
+.av-flash { opacity: 0; animation: av-flash 6s ease-in-out infinite; }
+.av-rgb   { animation: av-rgb 2.4s ease-in-out infinite; }
+.av-bar   { transform-box: fill-box; transform-origin: center bottom; animation: av-bar 1.6s ease-in-out infinite; }
+.av-neon  { animation: av-neon 4s ease-in-out infinite; }
+
+@keyframes av-write { 0% { stroke-dashoffset: 1; } 60%, 100% { stroke-dashoffset: 0; } }
+@keyframes av-key   { 0%, 84%, 100% { transform: translateY(0); } 88%, 95% { transform: translateY(2.5px); } }
+@keyframes av-flash { 0%, 90%, 100% { opacity: 0; } 94% { opacity: 1; } }
+@keyframes av-rgb   { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes av-bar   { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+@keyframes av-neon  { 0%, 100% { opacity: 1; } 48% { opacity: 1; } 50% { opacity: 0.78; } 54% { opacity: 1; } }
+
 /* ══════════════════════════ « RÉDUIRE LES ANIMATIONS » ═════════════════════
    Si le système demande moins de mouvement :
    - plus de rebonds, balancements, danse, orbite, vapeur, notes ;
@@ -324,7 +400,21 @@
   .avatar:not([data-motion="full"])[data-activity="dance"][data-state="code"] .av-hairback,
   .avatar:not([data-motion="full"])[data-activity="dance"][data-state="hello"] .av-breathe,
   .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-head,
-  .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-hairback {
+  .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-hairback,
+  .avatar:not([data-motion="full"])[data-activity="focus"][data-state="code"] .av-head,
+  .avatar:not([data-motion="full"])[data-activity="focus"][data-state="code"] .av-hairback,
+  .avatar:not([data-motion="full"])[data-activity="think"][data-state="code"] .av-head,
+  .avatar:not([data-motion="full"])[data-activity="think"][data-state="code"] .av-hairback,
+  .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-breathe,
+  .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-head,
+  .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-hairback,
+  .avatar:not([data-motion="full"]) .av-fx,
+  .avatar:not([data-motion="full"]) .av-write,
+  .avatar:not([data-motion="full"]) .av-draw,
+  .avatar:not([data-motion="full"]) .av-key,
+  .avatar:not([data-motion="full"]) .av-flash,
+  .avatar:not([data-motion="full"]) .av-bar,
+  .avatar:not([data-motion="full"]) .av-neon {
     animation: none;
   }
   .avatar:not([data-motion="full"]) .av-steam { animation: av-steam-soft 3.2s ease-in-out infinite; }

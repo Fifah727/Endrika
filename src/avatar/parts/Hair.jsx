@@ -1,3 +1,5 @@
+import { EXTRA } from "./HairExtra";
+
 // Chaque coiffure fournit deux calques :
 //   back  → dessiné DERRIÈRE le buste et la tête
 //   front → dessiné PAR-DESSUS le visage (frange, mèches, pointes)
@@ -13,7 +15,7 @@ const Strokes = ({ children, color, opacity = 0.65, width = 1.8 }) => (
 const TIP = "M90.5 254 C89 284 86 300 90 312 C95 324 112 328 126 322 C138 317 144 306 145 294 C146 282 146 270 148 260 L130 248 Z";
 const TIP_LINE = "M99 292 C100 306 106 316 118 320";
 
-const STYLES = {
+const BASE = {
   // ── Carré long (coiffure d'origine) ──────────────────────────────────────
   carre: {
     back: (t) => (
@@ -174,6 +176,8 @@ const STYLES = {
     front: () => null,
   },
 };
+
+const STYLES = { ...BASE, ...EXTRA };
 
 export function HairBack({ style, tone }) {
   return (STYLES[style] ?? STYLES.carre).back(tone);

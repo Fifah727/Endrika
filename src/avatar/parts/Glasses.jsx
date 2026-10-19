@@ -1,10 +1,17 @@
 // Verres rectangulaires (origine) ou ronds. Le clip sert aux reflets (éclat qui passe,
 // code qui se reflète) : ils ne dépassent jamais des verres.
 
+const CAT = "M134 160 C134 152 140 150 148 152 L192 158 C198 159 198 164 196 170 L192 186 C190 194 184 196 178 196 H150 C140 196 134 188 134 178 Z";
+
 export function LensClip({ id, kind }) {
   return (
     <clipPath id={id}>
-      {kind === "rondes" ? (
+      {kind === "cateye" ? (
+        <>
+          <path d={CAT} />
+          <path d={CAT} transform="translate(400 0) scale(-1 1)" />
+        </>
+      ) : kind === "rondes" ? (
         <>
           <circle cx="166" cy="173" r="24" />
           <circle cx="234" cy="173" r="24" />
@@ -22,6 +29,7 @@ export function LensClip({ id, kind }) {
 export function Glasses({ kind, color, lensId }) {
   if (kind === "aucune") return null;
   const round = kind === "rondes";
+  const cat = kind === "cateye";
   const sun = kind === "soleil";
   const lensFill = sun ? "#16171B" : "#F4F1EA";
   const lensOpacity = sun ? 0.86 : 0.08;
@@ -30,7 +38,12 @@ export function Glasses({ kind, color, lensId }) {
     <>
       {/* monture + verres */}
       <g fill={lensFill} fillOpacity={lensOpacity} stroke={color} strokeWidth="5">
-        {round ? (
+        {cat ? (
+          <>
+            <path d={CAT} strokeLinejoin="round" />
+            <path d={CAT} strokeLinejoin="round" transform="translate(400 0) scale(-1 1)" />
+          </>
+        ) : round ? (
           <>
             <circle cx="166" cy="173" r="24" />
             <circle cx="234" cy="173" r="24" />
@@ -44,7 +57,7 @@ export function Glasses({ kind, color, lensId }) {
       </g>
       {/* pont et branches */}
       <path d={round ? "M190 170 Q200 162 210 170" : "M196 166 Q200 160 204 166"} fill="none" stroke={color} strokeWidth="4.5" strokeLinecap="round" />
-      <path d={round ? "M142 168 L130 170 M258 168 L270 170" : "M136 164 L128 168 M264 164 L272 168"} fill="none" stroke={color} strokeWidth="4.5" strokeLinecap="round" />
+      <path d={round ? "M142 168 L130 170 M258 168 L270 170" : cat ? "M134 158 L124 152 M266 158 L276 152" : "M136 164 L128 168 M264 164 L272 168"} fill="none" stroke={color} strokeWidth="4.5" strokeLinecap="round" />
       {/* éclat qui traverse les verres de temps en temps */}
       <g clipPath={`url(#${lensId})`}>
         <polygon className="av-glint" points="0,150 14,150 -6,196 -20,196" fill="#fff" />
@@ -60,10 +73,10 @@ export function Glasses({ kind, color, lensId }) {
       )}
       {/* petits reflets sur la monture */}
       <g stroke="#fff" strokeOpacity={sun ? 0.28 : 0.4} strokeWidth="3" strokeLinecap="round" fill="none">
-        {round ? (
+        {round || cat ? (
           <>
-            <path d="M149 163 Q153 155 161 152" />
-            <path d="M217 163 Q221 155 229 152" />
+            <path d="M149 165 Q153 157 161 155" />
+            <path d="M217 165 Q221 157 229 155" />
           </>
         ) : (
           <>

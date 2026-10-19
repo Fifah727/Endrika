@@ -1,81 +1,107 @@
-import { DEFAULTS, FLAGS, LISTS } from "./catalog";
+import { COLOR_KEYS, DEFAULTS, FLAGS, LISTS, isHex } from "./catalog";
 
-const STORAGE_KEY = "avatar-studio:config:v1";
+const STORAGE_KEY = "endrika:config:v2";
+const CREATIONS_KEY = "endrika:creations:v1";
+const FAVORITES_KEY = "endrika:favorites:v1";
 
 /** Ne garde que des valeurs connues ; tout le reste retombe sur le défaut. */
 export function sanitize(input = {}) {
   const out = { ...DEFAULTS };
   for (const key of Object.keys(LISTS)) {
     const v = input[key];
-    if (typeof v === "string" && LISTS[key].some((o) => o.id === v)) out[key] = v;
+    if (typeof v !== "string") continue;
+    if (LISTS[key].some((o) => o.id === v) || (COLOR_KEYS.includes(key) && isHex(v))) out[key] = v;
   }
+  if (input.bgColor === "" || isHex(input.bgColor)) out.bgColor = input.bgColor;
   for (const key of FLAGS) {
     if (typeof input[key] === "boolean") out[key] = input[key];
   }
   return out;
 }
 
+/** Fusionne un correctif (catégorie, look, palette, inspiration…) dans une config valide. */
+export const applyPatch = (config, patch) => sanitize({ ...config, ...patch });
+
 /** Choisit une valeur au hasard dans chaque catégorie de l'apparence. */
-export function randomize(current) {
-  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)].id;
+export function randomize(current, rng = Math.random) {
+  const pick = (arr) => arr[Math.floor(rng() * arr.length)].id;
   const next = { ...current };
   for (const key of [
-    "skin", "face", "build", "eyes", "hair", "hairColor", "glasses", "frame",
-    "headwear", "headColor", "earphones", "earrings", "outfit", "outfitColor", "theme",
+    "skin", "face", "head", "build", "eyes", "expression", "hair", "hairColor", "glasses", "frame",
+    "headwear", "headColor", "earphones", "neck", "outfit", "outfitColor", "theme", "style",
   ]) {
     next[key] = pick(LISTS[key]);
   }
-  // Pilosité : plus rare qu'une valeur uniforme ; taches de rousseur : une fois sur trois.
-  next.facialHair = Math.random() < 0.3 ? pick(LISTS.facialHair) : "aucune";
-  next.freckles = Math.random() < 0.33;
-  // Les lunettes et couvre-chefs restent fréquents mais pas systématiques.
-  if (Math.random() < 0.35) next.glasses = "aucune";
-  if (Math.random() < 0.6) next.headwear = "aucun";
-  if (Math.random() < 0.4) next.earrings = "aucune";
+  next.facialHair = rng() < 0.3 ? pick(LISTS.facialHair) : "aucune";
+  next.freckles = rng() < 0.33;
+  next.faceArt = rng() < 0.4 ? pick(LISTS.faceArt) : "aucun";
+  next.earrings = rng() < 0.4 ? pick(LISTS.earrings) : "aucune";
+  if (rng() < 0.35) next.glasses = "aucune";
+  if (rng() < 0.55) next.headwear = "aucun";
+  if (rng() < 0.6) next.neck = "aucun";
+  if (rng() < 0.7) next.style = "editorial";
+  next.effect = rng() < 0.4 ? pick(LISTS.effect) : "aucun";
   return next;
 }
 
 // ── Lien partageable : seules les valeurs différentes du défaut sont écrites ──
-export function toHash(config) {
+// Forme : #/creer?hair=boucles&skin=ebene
+export function configToQuery(config) {
   const p = new URLSearchParams();
   for (const key of Object.keys(DEFAULTS)) {
     if (config[key] !== DEFAULTS[key]) p.set(key, String(config[key]));
   }
-  const s = p.toString();
-  return s ? `#${s}` : "";
+  return p.toString();
 }
 
-export function fromHash(hash) {
-  const p = new URLSearchParams((hash || "").replace(/^#/, ""));
+const LEGACY = {
+  laptop: (v) => ({ desk: v === "false" ? "rien" : "laptop" }),
+  shelves: (v) => ({ wall: v === "false" ? "rien" : "etageres" }),
+  codeCard: (v) => ({ card: v === "false" ? "rien" : "code" }),
+  symbols: (v) => ({ floaters: v === "false" ? "rien" : "code" }),
+};
+
+export function configFromQuery(query) {
+  const p = new URLSearchParams(query || "");
   if ([...p.keys()].length === 0) return null;
   const raw = {};
   for (const [k, v] of p) {
-    raw[k] = FLAGS.includes(k) ? v === "true" : v;
+    if (LEGACY[k]) Object.assign(raw, LEGACY[k](v));
+    else raw[k] = FLAGS.includes(k) ? v === "true" : v;
   }
   return sanitize(raw);
 }
 
-export function loadConfig() {
-  const fromUrl = fromHash(typeof location !== "undefined" ? location.hash : "");
-  if (fromUrl) return fromUrl;
+// ── Stockage local (jamais bloquant : si indisponible, on continue sans) ────
+const read = (key, fallback) => {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return sanitize(JSON.parse(saved));
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
   } catch {
-    /* stockage indisponible : on repart du défaut */
+    return fallback;
   }
-  return { ...DEFAULTS };
-}
-
-export function saveConfig(config) {
+};
+const write = (key, value) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch {
-    /* ignoré */
+    return false;
   }
-}
+};
 
-/** Lien complet vers l'avatar courant. */
-export function shareUrl(config) {
-  return `${location.origin}${location.pathname}${toHash(config)}`;
-}
+export const loadConfig = () => {
+  const saved = read(STORAGE_KEY, null);
+  return saved ? sanitize(saved) : { ...DEFAULTS };
+};
+export const saveConfig = (config) => write(STORAGE_KEY, config);
+
+export const loadCreations = () =>
+  read(CREATIONS_KEY, []).filter((c) => c && c.id && c.config).map((c) => ({ ...c, config: sanitize(c.config) }));
+export const saveCreations = (list) => write(CREATIONS_KEY, list);
+
+export const loadFavorites = () => {
+  const v = read(FAVORITES_KEY, []);
+  return Array.isArray(v) ? v.filter((x) => typeof x === "string") : [];
+};
+export const saveFavorites = (list) => write(FAVORITES_KEY, list);
