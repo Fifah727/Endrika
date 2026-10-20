@@ -75,13 +75,13 @@ export default function App() {
         <ErrorBoundary message="Cette page n'a pas pu se charger. Vérifie ta connexion puis réessaie.">
           <Suspense fallback={route.name === "inspirations" ? <div className="gallery"><GallerySkeleton /></div> : <PageSkeleton />}>
             {route.name === "inspirations" && (
-              <Gallery favorites={favs.favorites} isFavorite={favs.isFavorite} onToggleFavorite={favs.toggle} onCreate={(item) => openEditor(item.config, null, item.generated ? "remix" : item.id)} onQuickStart={quickStart} />
+              <Gallery favorites={favs.favorites} isFavorite={favs.isFavorite} onToggleFavorite={favs.toggle} onCreate={(item) => openEditor(item.config, null, item.id)} onQuickStart={quickStart} />
             )}
             {route.name === "creer" && (
               <Editor key={seed.nonce} seed={seed} toast={toast} onDraft={onDraft} onSave={(cfg, id) => store.save(cfg, id)} onOpenSaved={() => go("creations")} />
             )}
             {route.name === "creations" && (
-              <Saved creations={store.creations} onOpen={(c) => openEditor(c.config, c.id)} onRename={store.rename} onDuplicate={store.duplicate} onRemove={store.remove} onNew={() => go("creer", "")} />
+              <Saved creations={store.creations} onOpen={(c) => openEditor(c.config, c.id)} onRename={store.rename} onRemove={store.remove} onNew={() => go("creer", "")} />
             )}
           </Suspense>
         </ErrorBoundary>

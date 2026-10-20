@@ -6,13 +6,12 @@ Plateforme pour créer un **avatar animé personnalisé**, quel que soit ton mé
 
 ## Ce que fait Endrika
 
-**Inspirations** : galerie masonry de 38 inspirations en 10 collections (Cute & Coquette, Soft Pastel, Dark Academia, Dreamy, Artistic Soul, Digital Creator, Study Vibes, Minimal, Ocean, Fantasy). Filtres par collection, catégorie d'avatar, couleur et style artistique ; favoris ; bouton « Créer à partir de cette inspiration » (chaque inspiration est une vraie configuration modifiable) ; générateur de « remix » inédits.
+**Inspirations** : galerie masonry de 38 inspirations en 10 collections (Cute & Coquette, Soft Pastel, Dark Academia, Dreamy, Artistic Soul, Digital Creator, Study Vibes, Minimal, Ocean, Fantasy). Filtres par collection et par catégorie, favoris, et « Créer à partir de cette inspiration » (chaque inspiration est une vraie configuration modifiable).
 
-**Éditeur en 6 étapes** : Univers (catégorie, looks prêts à personnaliser, style visuel, palettes) · Personnage · Look · Décor · Animation · Exporter.
+**Éditeur en 6 étapes** : Univers · Personnage · Look · Décor · Animation · Exporter.
 
-- **5 univers** : Développeur 💻, Étudiant 📚, Autres métiers 💼, Créatif 🎨, Personnalisation libre ✨. Chaque univers met en avant ses objets (ordinateur, cahier, tablette graphique, stéthoscope…), mais on peut tout mélanger (bouton « Tout »).
-- **7 styles artistiques** : Illustré, Pastel, Sticker, Encre, Noir & blanc, Rêverie, Rétro.
-- 15 coiffures, 5 formes de visage, 3 proportions, 8 expressions, 10 tenues, 12 couvre-chefs, 8 accessoires de cou, 11 objets de bureau, 14 ambiances, 7 activités animées, effets de particules, couleurs libres (cheveux, yeux, vêtement, monture, mur).
+- **5 univers** : Développeur 💻, Étudiant 📚, Autres métiers 💼, Créatif 🎨, Personnalisation libre ✨. Chaque univers met en avant ses objets (ordinateur, cahier, tablette graphique, stéthoscope…) en premier, mais tout reste accessible : on peut mélanger les catégories.
+- 15 coiffures, 5 formes de visage, 7 expressions, 10 tenues, 12 couvre-chefs, 8 accessoires de cou, 11 objets de bureau, 14 ambiances, effets de particules, 5 activités animées, couleurs libres pour les cheveux et les vêtements.
 - **Annuler / rétablir** (Ctrl+Z, Ctrl+Maj+Z), réinitialiser, aléatoire, **lien partageable**, **enregistrement** des créations (« Mes créations », sur l'appareil).
 
 **Exports réels** (générés dans le navigateur) :
@@ -20,8 +19,8 @@ Plateforme pour créer un **avatar animé personnalisé**, quel que soit ton mé
 | Format | Options | Remarques |
 |---|---|---|
 | PNG | taille 512 / 1024 / 2048, fond décor / transparent / couleur | |
-| GIF | taille, fluidité, durée, fond | boucle parfaite ; transparence 1 bit |
-| MP4 | taille, fluidité, durée, répétitions, qualité, fond | H.264 via WebCodecs (Chrome, Edge, Safari récents) |
+| GIF | taille, durée, fond | boucle parfaite ; transparence 1 bit |
+| MP4 | taille, durée, fond | H.264 via WebCodecs (Chrome, Edge, Safari récents) |
 | SVG animé | fond | vectoriel, animations CSS embarquées |
 
 ## Lancer en local
@@ -47,13 +46,13 @@ src/
   App.jsx, main.jsx         application, navigation par hash, écrans chargés à la demande
   views/                    Gallery (inspirations), Editor (6 étapes), Saved (mes créations)
   components/               Nav, InspirationCard, InspirationModal, Skeleton, ErrorBoundary
-  data/                     collections.js, inspirations.js (38 configs + remix + filtre couleur)
+  data/                     collections.js, inspirations.js (38 configurations)
   state/                    useHistory (annuler/rétablir), useRoute, useStore (favoris, créations)
   avatar/
     catalog.js              TOUTES les options, palettes, catégories, looks
     config.js               validation, hasard, lien partageable, stockage local
     Avatar.jsx              assemble les calques selon la configuration
-    parts/                  Hair, Face, Glasses, Accessories, Outfit, DeskItems, Decor, Scene, StyleFilters
+    parts/                  Hair, Face, Glasses, Accessories, Outfit, DeskItems, Decor, Scene
   ui/
     panels.js, Options.jsx  étapes et contrôles de l'éditeur
     ExportPanel.jsx         options et aperçu des exports
@@ -67,6 +66,10 @@ src/
 - **Une inspiration** : une ligne `I(...)` dans `src/data/inspirations.js` (n'importe quelle combinaison d'options valides).
 - **Une collection** : une entrée dans `src/data/collections.js`.
 
+## Ce qui a été volontairement retiré (à rajouter plus tard si besoin)
+
+Pour garder le site léger et fiable : styles artistiques par filtres (Sticker, Encre, Pastel, Rétro, Rêverie), générateur de « remix », looks prêts à l'emploi, palettes, couleur de mur libre, proportions « chibi », réglages de la bulle et du survol, tasse/orbite en option, filtres par couleur et par style dans la galerie, duplication des créations, options d'export avancées (fluidité, répétitions, qualité).
+
 ## Comment fonctionnent les exports
 
 L'avatar est rendu hors écran ; les animations CSS sont figées à des instants précis avec la Web Animations API (leurs durées sont ajustées pour une boucle parfaite), chaque instant est converti en SVG statique puis dessiné sur un canvas, et enfin encodé : `gifenc` pour le GIF, `WebCodecs` + `mp4-muxer` pour le MP4. Les encodeurs ne sont chargés qu'au moment de l'export.
@@ -74,6 +77,6 @@ L'avatar est rendu hors écran ; les animations CSS sont figées à des instants
 ## Limites connues
 
 - Le MP4 nécessite WebCodecs (contexte sécurisé : https ou localhost). Sinon l'interface l'indique et propose le GIF.
-- Le GIF transparent n'a pas de demi-teintes : les bords peuvent être crénelés.
+- Le GIF transparent n'a pas de demi-teintes : les bords peuvent être légèrement crénelés.
 - Les créations et favoris sont stockés dans le navigateur (pas de compte ni de synchronisation).
 - Les textes (bulle) utilisent la police monospace du système dans les fichiers exportés.

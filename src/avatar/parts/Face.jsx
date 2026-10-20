@@ -109,10 +109,6 @@ const mouths = (c) => ({
     n: <><path d="M180 214 H220 Q220 242 200 242 Q180 242 180 214 Z" fill={INSIDE} stroke={c} strokeWidth="3.4" strokeLinejoin="round" /><path d="M189 237 Q200 228 211 237 Q200 244 189 237 Z" fill={TONGUE} /></>,
     s: <><path d="M178 213 H222 Q222 246 200 246 Q178 246 178 213 Z" fill={INSIDE} stroke={c} strokeWidth="3.6" strokeLinejoin="round" /><path d="M188 240 Q200 229 212 240 Q200 248 188 240 Z" fill={TONGUE} /></>,
   },
-  reveur: {
-    n: <path d="M190 222 Q200 229 210 222" fill="none" stroke={c} strokeWidth="4" strokeLinecap="round" />,
-    s: <path d="M187 220 Q200 232 213 220" fill="none" stroke={c} strokeWidth="4.4" strokeLinecap="round" />,
-  },
   etoiles: {
     n: <path d="M186 217 Q200 238 214 217 Z" fill={INSIDE} stroke={c} strokeWidth="3.2" strokeLinejoin="round" />,
     s: <path d="M183 216 Q200 242 217 216 Z" fill={INSIDE} stroke={c} strokeWidth="3.4" strokeLinejoin="round" />,
@@ -137,7 +133,6 @@ const BROWS = {
   malin: ["M146 149 Q164 143 188 149", "M212 138 Q236 128 254 140"],
   surprise: ["M146 139 Q164 127 188 135", "M212 135 Q236 127 254 139"],
   rieur: ["M146 144 Q164 133 188 141", "M212 141 Q236 133 254 144"],
-  reveur: ["M146 144 Q166 139 188 147", "M212 147 Q234 139 254 144"],
   etoiles: ["M146 143 Q164 131 188 139", "M212 139 Q236 131 254 143"],
 };
 
@@ -153,10 +148,10 @@ export function Brows({ tone, expression = "sourire" }) {
   );
 }
 
-const EYE_KIND = { rieur: "happy", reveur: "sleepy", etoiles: "star" };
+const EYE_KIND = { rieur: "happy", etoiles: "star" };
 const STAR = "M0 -9 l2.6 6.2 6.6 .6 -5 4.4 1.6 6.6 -5.8 -3.5 -5.8 3.5 1.6 -6.6 -5 -4.4 6.6 -.6z";
 
-function Eye({ cx, side, color, kind, lid }) {
+function Eye({ cx, side, color, kind }) {
   const dir = side === "l" ? 1 : -1;
   if (kind === "happy") {
     return <path d={`M${cx - 10} 177 Q${cx} 163 ${cx + 10} 177`} fill="none" stroke={INK} strokeWidth="3.6" strokeLinecap="round" />;
@@ -174,12 +169,6 @@ function Eye({ cx, side, color, kind, lid }) {
         </>
       )}
       <path d={`M${cx - 10} 168 Q${cx} 160 ${cx + 11} 168 M${cx - 10 * dir} 168 l${-3 * dir} -2`} fill="none" stroke={INK} strokeWidth="2.4" strokeLinecap="round" />
-      {kind === "sleepy" && (
-        <>
-          <path d={`M${cx - 10} 173 H${cx + 11} V157 H${cx - 10} Z`} fill={lid} />
-          <path d={`M${cx - 10} 173 Q${cx} 177 ${cx + 11} 173`} fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round" />
-        </>
-      )}
     </>
   );
 }
@@ -188,8 +177,8 @@ export function Eyes({ color, expression = "sourire", skin }) {
   const kind = EYE_KIND[expression] ?? "open";
   return (
     <g className="av-look">
-      <g className="av-eye av-eye-l"><Eye cx={166} side="l" color={color} kind={kind} lid={skin.face} /></g>
-      <g className="av-eye av-eye-r"><Eye cx={234} side="r" color={color} kind={kind} lid={skin.face} /></g>
+      <g className="av-eye av-eye-l"><Eye cx={166} side="l" color={color} kind={kind} /></g>
+      <g className="av-eye av-eye-r"><Eye cx={234} side="r" color={color} kind={kind} /></g>
     </g>
   );
 }
@@ -205,9 +194,6 @@ export function FaceArt({ kind, skin }) {
       </g>
     );
   }
-  if (kind === "coeur") {
-    return <path d="M0 3 C-9 -4 -5 -10 0 -6 C5 -10 9 -4 0 3 Z" transform="translate(152 206)" fill="#F4739B" stroke="#D64F7E" strokeWidth=".8" strokeLinejoin="round" />;
-  }
   if (kind === "paillettes") {
     const dots = [[150, 190, "#FFE08A"], [158, 197, "#9FF0D8"], [170, 190, "#FF9BD0"], [250, 190, "#FFE08A"], [242, 197, "#9FF0D8"], [230, 190, "#FF9BD0"], [162, 203, "#FFE08A"], [238, 203, "#FF9BD0"]];
     return (
@@ -215,14 +201,6 @@ export function FaceArt({ kind, skin }) {
         {dots.map(([x, y, c], i) => (
           <circle key={i} className="av-spark" style={{ animationDelay: `${-i * 0.4}s` }} cx={x} cy={y} r={i % 3 === 0 ? 2 : 1.4} fill={c} />
         ))}
-      </g>
-    );
-  }
-  if (kind === "eyeliner") {
-    return (
-      <g fill="none" stroke={INK} strokeWidth="2.6" strokeLinecap="round">
-        <path d="M156 168 L148 161" />
-        <path d="M244 168 L252 161" />
       </g>
     );
   }

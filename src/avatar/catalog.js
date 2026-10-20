@@ -9,34 +9,15 @@
 // ── Catégories d'univers ───────────────────────────────────────────────────
 export const CATEGORIES = [
   { id: "dev", emoji: "💻", label: "Développeur", blurb: "Ordinateur, clavier, fenêtre de code et accessoires tech",
-    patch: { desk: "laptop", card: "code", floaters: "code", wall: "etageres", activity: "code", earphones: "filaires" } },
+    patch: { desk: "laptop", wall: "etageres", earphones: "filaires" } },
   { id: "etudiant", emoji: "📚", label: "Étudiant", blurb: "Cahiers, livres, stylos, tableau et petits mots",
-    patch: { desk: "cahier", card: "notes", floaters: "ecole", wall: "tableau", activity: "focus", earphones: "aucun" } },
+    patch: { desk: "cahier", wall: "tableau", earphones: "aucun" } },
   { id: "metier", emoji: "💼", label: "Autres métiers", blurb: "Santé, cuisine, chantier, bureau, enseignement…",
-    patch: { desk: "dossier", card: "chart", floaters: "pro", wall: "cadres", activity: "think", earphones: "aucun" } },
+    patch: { desk: "dossier", wall: "cadres", earphones: "aucun" } },
   { id: "creatif", emoji: "🎨", label: "Créatif", blurb: "Dessin, photo, musique, couleurs et inspiration",
-    patch: { desk: "tablette", card: "palette", floaters: "art", wall: "guirlande", activity: "chill", earphones: "casque" } },
+    patch: { desk: "tablette", wall: "guirlande", earphones: "casque" } },
   { id: "libre", emoji: "✨", label: "Personnalisation libre", blurb: "Aucun thème imposé : tu composes tout toi-même",
-    patch: { desk: "rien", card: "rien", floaters: "rien", wall: "rien", effect: "etoiles", activity: "chill", earphones: "aucun" } },
-];
-
-// ── Looks prêts à personnaliser, par catégorie ─────────────────────────────
-export const LOOKS = [
-  { id: "web", cat: "dev", emoji: "🧑‍💻", label: "Développeur web", patch: { outfit: "hoodie", outfitColor: "#5B3A29", desk: "laptop", glasses: "rect", earphones: "filaires" } },
-  { id: "gamer", cat: "dev", emoji: "🎧", label: "Nuit de code", patch: { outfit: "hoodie", outfitColor: "#2F4468", desk: "clavier", earphones: "casque", theme: "nuit", effect: "lucioles", glasses: "aucune" } },
-  { id: "sysadmin", cat: "dev", emoji: "🖥️", label: "Ingénieur logiciel", patch: { outfit: "pull", outfitColor: "#6F9482", desk: "laptop", glasses: "rondes", theme: "studio" } },
-  { id: "college", cat: "etudiant", emoji: "🎒", label: "Collège / lycée", patch: { outfit: "uniforme", outfitColor: "#2F4468", desk: "cahier", neck: "cravate", headwear: "aucun", wall: "tableau" } },
-  { id: "fac", cat: "etudiant", emoji: "🎓", label: "Université", patch: { outfit: "pull", outfitColor: "#C47A63", desk: "livre", glasses: "rondes", theme: "academia", wall: "etageres" } },
-  { id: "diplome", cat: "etudiant", emoji: "🎉", label: "Jour de diplôme", patch: { outfit: "blazer", outfitColor: "#25262A", headwear: "mortier", headColor: "#25262A", desk: "livre", activity: "celebrate", theme: "ciel" } },
-  { id: "sante", cat: "metier", emoji: "🩺", label: "Santé", patch: { outfit: "blouse", outfitColor: "#E4D9BF", neck: "stethoscope", desk: "trousse", card: "chart", theme: "lagon", glasses: "aucune" } },
-  { id: "cuisine", cat: "metier", emoji: "🍳", label: "Cuisine", patch: { outfit: "tablier", outfitColor: "#C47A63", headwear: "toque", headColor: "#FFFFFF", desk: "planche", card: "rien", theme: "peche", wall: "cadres" } },
-  { id: "chantier", cat: "metier", emoji: "🏗️", label: "Chantier / atelier", patch: { outfit: "salopette", outfitColor: "#2F4468", headwear: "chantier", headColor: "#D9A53C", desk: "outils", card: "rien", theme: "studio", wall: "rien" } },
-  { id: "bureau", cat: "metier", emoji: "📊", label: "Bureau / business", patch: { outfit: "chemise", outfitColor: "#6F9482", neck: "cravate", desk: "dossier", card: "chart", theme: "papier", glasses: "rect" } },
-  { id: "prof", cat: "metier", emoji: "🍎", label: "Enseignement", patch: { outfit: "pull", outfitColor: "#D58BA0", desk: "livre", card: "notes", wall: "tableau", glasses: "rondes", floaters: "ecole" } },
-  { id: "dessin", cat: "creatif", emoji: "🖌️", label: "Dessin / illustration", patch: { outfit: "tee", outfitColor: "#E4D9BF", headwear: "beret", headColor: "#C47A63", desk: "tablette", card: "palette", theme: "lavande" } },
-  { id: "photo", cat: "creatif", emoji: "📷", label: "Photographie", patch: { outfit: "chemise", outfitColor: "#25262A", desk: "camera", neck: "badge", card: "rien", theme: "papier", wall: "cadres" } },
-  { id: "musique", cat: "creatif", emoji: "🎹", label: "Musique", patch: { outfit: "hoodie", outfitColor: "#D58BA0", earphones: "casque", desk: "piano", card: "playlist", theme: "nuit", effect: "etoiles" } },
-  { id: "libre", cat: "libre", emoji: "🌈", label: "Fantasy & paillettes", patch: { outfit: "pull", outfitColor: "#D58BA0", headwear: "couronne", headColor: "#D9B26A", theme: "galaxie", effect: "etoiles", faceArt: "paillettes" } },
+    patch: { desk: "rien", wall: "rien", effect: "etoiles", earphones: "aucun" } },
 ];
 
 // ── Teints ─────────────────────────────────────────────────────────────────
@@ -63,12 +44,6 @@ export const BUILDS = [
   { id: "large", label: "Large", scale: 1.09 },
 ];
 
-export const HEADS = [
-  { id: "normale", label: "Proportions réalistes", scale: 1 },
-  { id: "douce", label: "Tête douce", scale: 1.06 },
-  { id: "chibi", label: "Chibi", scale: 1.12 },
-];
-
 export const EYES = [
   { id: "brun", label: "Brun", color: "#4A2C1D" },
   { id: "noisette", label: "Noisette", color: "#7A5230" },
@@ -85,7 +60,6 @@ export const EXPRESSIONS = [
   { id: "malin", label: "Malicieux" },
   { id: "surprise", label: "Surpris" },
   { id: "rieur", label: "Éclat de rire" },
-  { id: "reveur", label: "Rêveur" },
   { id: "etoiles", label: "Yeux étoilés" },
 ];
 
@@ -93,10 +67,8 @@ export const FACE_ARTS = [
   { id: "aucun", label: "Aucun" },
   { id: "grain", label: "Grain de beauté" },
   { id: "etoiles", label: "Étoiles" },
-  { id: "coeur", label: "Cœur" },
   { id: "paillettes", label: "Paillettes" },
   { id: "rouge", label: "Rouge à lèvres" },
-  { id: "eyeliner", label: "Eye-liner" },
 ];
 
 // ── Cheveux ────────────────────────────────────────────────────────────────
@@ -223,6 +195,7 @@ export const CLOTH_COLORS = [
   { id: "lilas", label: "Lilas", color: "#9B86C9" },
   { id: "ciel", label: "Ciel", color: "#8DB8D9" },
   { id: "blanc", label: "Blanc", color: "#F4F1EA" },
+  { id: "or", label: "Or", color: "#D9B26A" },
 ];
 
 // ── Décor : objet principal, mur, fenêtre, symboles, effets ────────────────
@@ -248,25 +221,6 @@ export const WALLS = [
   { id: "neon", label: "Enseigne néon", emoji: "🌟", tags: ["creatif", "dev"] },
   { id: "tableau", label: "Tableau noir", emoji: "🧮", tags: ["etudiant", "metier"] },
   { id: "rien", label: "Mur nu", emoji: "◻︎" },
-];
-
-export const CARDS = [
-  { id: "code", label: "Fenêtre de code", emoji: "🧑‍💻", tags: ["dev"] },
-  { id: "notes", label: "Post-it", emoji: "📝", tags: ["etudiant"] },
-  { id: "palette", label: "Palette de couleurs", emoji: "🎨", tags: ["creatif"] },
-  { id: "chart", label: "Graphique", emoji: "📈", tags: ["metier"] },
-  { id: "playlist", label: "Lecteur de musique", emoji: "🎵", tags: ["creatif"] },
-  { id: "rien", label: "Aucune", emoji: "◻︎" },
-];
-
-export const FLOATERS = [
-  { id: "code", label: "Code", emoji: "</>", tags: ["dev"] },
-  { id: "ecole", label: "École", emoji: "∑", tags: ["etudiant"] },
-  { id: "art", label: "Art", emoji: "♪", tags: ["creatif"] },
-  { id: "pro", label: "Pro", emoji: "%", tags: ["metier"] },
-  { id: "cute", label: "Cute", emoji: "♥" },
-  { id: "etoiles", label: "Étoiles", emoji: "✦" },
-  { id: "rien", label: "Aucun", emoji: "◻︎" },
 ];
 
 export const EFFECTS = [
@@ -326,38 +280,9 @@ export const THEMES = [
     deskTop: "#C98A68", deskEdge: "#DDA283", deskGrain: "#A86E50", contact: "#5A2E22", a: "#D2546A", b: "#7B5AA6", c: "#F2B84B" },
 ];
 
-// ── Styles artistiques : traitements visuels appliqués à tout le rendu ─────
-export const STYLES = [
-  { id: "editorial", label: "Illustré", hint: "Aplats nets, le style d'origine" },
-  { id: "pastel", label: "Pastel doux", hint: "Couleurs adoucies et lumineuses" },
-  { id: "sticker", label: "Sticker", hint: "Contour blanc épais et ombre portée" },
-  { id: "encre", label: "Encre", hint: "Silhouette cernée d'un trait sombre" },
-  { id: "mono", label: "Noir & blanc", hint: "Monochrome contrasté" },
-  { id: "reve", label: "Rêverie", hint: "Voile rosé et halo lumineux" },
-  { id: "retro", label: "Rétro", hint: "Teintes sépia et trame de points" },
-];
-
-// ── Palettes : jeux de couleurs harmonieux appliqués en un clic ────────────
-export const PALETTES = [
-  { id: "sauge", label: "Sauge & crème", colors: ["#6F9482", "#E4D9BF", "#C98B72"], patch: { theme: "atelier", outfitColor: "#6F9482", headColor: "#E4D9BF", frame: "marron" } },
-  { id: "peche", label: "Pêche & corail", colors: ["#F7DCCB", "#C8645A", "#5E8C86"], patch: { theme: "peche", outfitColor: "#C47A63", headColor: "#E4D9BF", frame: "rouge" } },
-  { id: "lilas", label: "Lilas doux", colors: ["#E4DDF0", "#9B86C9", "#E08A9E"], patch: { theme: "lavande", outfitColor: "#9B86C9", headColor: "#D58BA0", frame: "rose" } },
-  { id: "rose", label: "Bonbon", colors: ["#FCD9E4", "#E8628F", "#7EC4B6"], patch: { theme: "bonbon", outfitColor: "#D58BA0", headColor: "#F4F1EA", frame: "rose" } },
-  { id: "minuit", label: "Minuit", colors: ["#1B2233", "#8FD6B0", "#F2A38A"], patch: { theme: "nuit", outfitColor: "#2F4468", headColor: "#8DB8D9", frame: "argent" } },
-  { id: "academia", label: "Académie", colors: ["#2A2B22", "#9BB07C", "#C2855A"], patch: { theme: "academia", outfitColor: "#5B3A29", headColor: "#6F9482", frame: "or" } },
-  { id: "ciel", label: "Ciel rêveur", colors: ["#DCEBFA", "#8D7BD8", "#F29EC0"], patch: { theme: "ciel", outfitColor: "#8DB8D9", headColor: "#D58BA0", frame: "bleu" } },
-  { id: "lagon", label: "Lagon", colors: ["#D6E9EA", "#2F8F94", "#E0795D"], patch: { theme: "lagon", outfitColor: "#8DB8D9", headColor: "#F4F1EA", frame: "bleu" } },
-  { id: "mono", label: "Monochrome", colors: ["#F2F1EE", "#2A2A2A", "#8A8A86"], patch: { theme: "papier", outfitColor: "#25262A", headColor: "#25262A", frame: "noir" } },
-  { id: "sunset", label: "Sunset", colors: ["#F9D2B8", "#D2546A", "#7B5AA6"], patch: { theme: "sunset", outfitColor: "#9B86C9", headColor: "#D9A53C", frame: "rouge" } },
-  { id: "jardin", label: "Jardin", colors: ["#DDEBD3", "#4F8A5B", "#E08A6A"], patch: { theme: "jardin", outfitColor: "#6F9482", headColor: "#F4F1EA", frame: "or" } },
-  { id: "galaxie", label: "Galaxie", colors: ["#241B3D", "#FF9BD0", "#9FF0D8"], patch: { theme: "galaxie", outfitColor: "#9B86C9", headColor: "#D9B26A", frame: "rose" } },
-];
-
 // ── Animation ──────────────────────────────────────────────────────────────
 export const ACTIVITIES = [
-  { id: "code", label: "Coder en musique", hint: "Tête qui rebondit, notes, idée de temps en temps" },
-  { id: "focus", label: "Se concentrer", hint: "Tête penchée sur son travail, regard baissé" },
-  { id: "think", label: "Réfléchir", hint: "Les idées jaillissent, sourcils relevés" },
+  { id: "code", label: "Au travail, en musique", hint: "Tête qui rebondit en rythme, notes de musique, idée de temps en temps" },
   { id: "chill", label: "Se détendre", hint: "Respiration lente, vapeur du café" },
   { id: "dance", label: "Danser", hint: "Tout le buste se balance en rythme" },
   { id: "wave", label: "Faire coucou", hint: "Le bras reste levé, la bulle reste affichée" },
@@ -370,27 +295,24 @@ export const TEMPOS = [
   { id: "rapide", label: "Rapide", value: 0.65 },
 ];
 
-export const MESSAGES = [
-  { id: "rotation", label: "Variés", texts: ["Coucou !", "Bonjour et bienvenue !", "Une idée en tête ?", "On crée quelque chose ?"] },
-  { id: "bonjour", label: "Bonjour !", texts: ["Bonjour !"] },
-  { id: "salama", label: "Salama !", texts: ["Salama ! Tongasoa !"] },
-  { id: "hello", label: "Hello!", texts: ["Hello! Nice to meet you!"] },
-  { id: "bravo", label: "Bravo !", texts: ["Bravo !", "Bien joué !"] },
-  { id: "aucun", label: "Aucun", texts: [] },
-];
+// Messages de la bulle quand l'avatar te salue
+export const GREETINGS = ["Coucou !", "Bonjour et bienvenue !", "Salama !", "Une idée en tête ?"];
+
+// Éléments qui suivent l'univers choisi (plus de réglages séparés)
+export const CARD_BY_CATEGORY = { dev: "code", etudiant: "notes", metier: "chart", creatif: "palette", libre: "rien" };
+export const FLOATERS_BY_CATEGORY = { dev: "code", etudiant: "ecole", metier: "pro", creatif: "art", libre: "etoiles" };
 
 // ── Valeurs par défaut (= l'avatar d'origine) ──────────────────────────────
 export const DEFAULTS = {
-  category: "dev", style: "editorial",
-  skin: "caramel", face: "ovale", head: "normale", build: "standard", eyes: "brun", expression: "sourire",
+  category: "dev",
+  skin: "caramel", face: "ovale", build: "standard", eyes: "brun", expression: "sourire",
   freckles: false, faceArt: "aucun",
   hair: "carre", hairColor: "noir", facialHair: "aucune",
   glasses: "rect", frame: "marron", headwear: "aucun", headColor: "sauge",
   earphones: "filaires", earrings: "aucune", neck: "aucun",
   outfit: "hoodie", outfitColor: "marron",
-  theme: "atelier", bgColor: "", desk: "laptop", wall: "etageres", card: "code", floaters: "code", effect: "aucun",
-  mug: true, orbit: true,
-  activity: "code", tempo: "normal", hover: true, intro: true, message: "rotation",
+  theme: "atelier", desk: "laptop", wall: "etageres", effect: "aucun",
+  activity: "code", tempo: "normal",
 };
 
 // Clés dont la valeur peut être une couleur libre (#RRGGBB)
@@ -398,17 +320,17 @@ export const COLOR_KEYS = ["hairColor", "outfitColor", "eyes", "frame", "headCol
 
 // Table de correspondance clé → liste d'options (sert à valider et au hasard)
 export const LISTS = {
-  category: CATEGORIES, style: STYLES,
-  skin: SKINS, face: FACES, head: HEADS, build: BUILDS, eyes: EYES, expression: EXPRESSIONS, faceArt: FACE_ARTS,
+  category: CATEGORIES,
+  skin: SKINS, face: FACES, build: BUILDS, eyes: EYES, expression: EXPRESSIONS, faceArt: FACE_ARTS,
   hair: HAIRS, hairColor: HAIR_COLORS, facialHair: FACIAL_HAIRS,
   glasses: GLASSES, frame: FRAME_COLORS, headwear: HEADWEARS, headColor: CLOTH_COLORS,
   earphones: EARPHONES, earrings: EARRINGS, neck: NECKS,
   outfit: OUTFITS, outfitColor: CLOTH_COLORS,
-  theme: THEMES, desk: DESKS, wall: WALLS, card: CARDS, floaters: FLOATERS, effect: EFFECTS,
-  activity: ACTIVITIES, tempo: TEMPOS, message: MESSAGES,
+  theme: THEMES, desk: DESKS, wall: WALLS, effect: EFFECTS,
+  activity: ACTIVITIES, tempo: TEMPOS,
 };
 
-export const FLAGS = ["freckles", "mug", "orbit", "hover", "intro"];
+export const FLAGS = ["freckles"];
 
 export const isHex = (v) => typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v);
 
@@ -428,5 +350,4 @@ export const CROPS = {
   full: "0 0 400 400",
   desk: "40 250 320 150",
   wall: "270 60 130 140",
-  card: "0 70 120 110",
 };

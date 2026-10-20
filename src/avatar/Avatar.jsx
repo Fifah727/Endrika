@@ -1,7 +1,7 @@
 import { forwardRef, memo, useCallback, useEffect, useId, useRef, useState } from "react";
 import "../styles/avatar.css";
-import { byId } from "./catalog";
-import { deriveTheme, hairTones } from "./color";
+import { CARD_BY_CATEGORY, FLOATERS_BY_CATEGORY, GREETINGS, byId } from "./catalog";
+import { hairTones } from "./color";
 import { Audio, Earrings, Headwear, Neck } from "./parts/Accessories";
 import { Background, CardItem, Effects, Floaters, Orbit, WallItem, WallPattern } from "./parts/Decor";
 import DeskItem from "./parts/DeskItems";
@@ -10,7 +10,6 @@ import { Glasses, LensClip } from "./parts/Glasses";
 import { HairBack, HairFront } from "./parts/Hair";
 import { Sleeve, Torso } from "./parts/Outfit";
 import { Bubble, Desk, Idea } from "./parts/Scene";
-import { personFilterFor, sceneFilterFor, StyleDefs, StyleOverlay } from "./parts/StyleFilters";
 
 /**
  * Avatar animé, entièrement piloté par `config` (voir catalog.js).
@@ -79,19 +78,15 @@ const Avatar = forwardRef(function Avatar(
   const skin = byId("skin", config.skin);
   const tone = hairTones(byId("hairColor", config.hairColor).color);
   const eyeColor = byId("eyes", config.eyes).color;
-  const baseTheme = byId("theme", config.theme);
-  const theme = config.bgColor ? deriveTheme(baseTheme, config.bgColor) : baseTheme;
-  const headScale = byId("head", config.head).scale;
+  const theme = byId("theme", config.theme);
   const lip = config.faceArt === "rouge" ? "#C2334D" : undefined;
-  const sceneFilter = sceneFilterFor(config.style);
-  const personFilter = personFilterFor(config.style);
   const fx = config.effect !== "aucun" ? config.effect : config.activity === "celebrate" ? "confettis" : null;
   const frameColor = byId("frame", config.frame).color;
   const headColor = byId("headColor", config.headColor).color;
   const outfitColor = byId("outfitColor", config.outfitColor).color;
   const build = byId("build", config.build).scale;
   const tempo = byId("tempo", config.tempo).value;
-  const texts = byId("message", config.message).texts;
+  const texts = GREETINGS;
   const textsKey = texts.join("|");
 
   // ── Interactions ──────────────────────────────────────────────────────────
@@ -162,7 +157,7 @@ const Avatar = forwardRef(function Avatar(
 
   // Salut d'accueil, une seule fois (annulé si on touche l'avatar avant)
   useEffect(() => {
-    if (!interactive || !config.intro) return undefined;
+    if (!interactive) return undefined;
     const a = setTimeout(() => !touched.current && show(), 900);
     const b = setTimeout(() => !touched.current && hide(), 4300);
     return () => {
@@ -170,7 +165,7 @@ const Avatar = forwardRef(function Avatar(
       clearTimeout(b);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [interactive, config.intro]);
+  }, [interactive]);
 
   useEffect(
     () => () => {
@@ -181,23 +176,18 @@ const Avatar = forwardRef(function Avatar(
     []
   );
 
-  // Si on désactive la réaction au survol, on retombe tout de suite en état « code »
-  useEffect(() => {
-    if (!config.hover && helloRef.current) hide();
-  }, [config.hover]);
-
   const onEnter = (e) => {
-    if (!config.hover || e.pointerType === "touch") return;
+    if (e.pointerType === "touch") return;
     touched.current = true;
     show();
   };
   const onLeave = (e) => {
-    if (!config.hover || e.pointerType === "touch") return;
+    if (e.pointerType === "touch") return;
     hide();
   };
   const onDown = (e) => {
     touched.current = true;
-    if (config.hover && e.pointerType === "touch") {
+    if (e.pointerType === "touch") {
       show();
       clearTimeout(tapTimer.current);
       tapTimer.current = setTimeout(hide, 3500);
@@ -205,7 +195,7 @@ const Avatar = forwardRef(function Avatar(
   };
   // Les yeux et la tête suivent le curseur
   const onMove = (e) => {
-    if (!config.hover || e.pointerType === "touch") return;
+    if (e.pointerType === "touch") return;
     pointer.current.x = e.clientX;
     pointer.current.y = e.clientY;
     if (raf.current) return;
@@ -256,76 +246,66 @@ const Avatar = forwardRef(function Avatar(
         <LensClip id={lensId} kind={config.glasses} />
         <clipPath id={cableId}><rect x="0" y="0" width="400" height="366" /></clipPath>
         <clipPath id={cutId}><rect x="-40" y="-40" width="480" height="406" /></clipPath>
-        <StyleDefs uid={uid} style={config.style} />
       </defs>
 
-      <g filter={sceneFilter ? `url(#st-${sceneFilter}-${uid})` : undefined}>
-        {showScene && (
-          <>
-            {showBackground && <Background theme={theme} patternId={gridId} />}
-            {config.orbit && <Orbit theme={theme} />}
-            <WallItem kind={config.wall} theme={theme} />
-            <CardItem kind={config.card} theme={theme} />
-            <Floaters kind={config.floaters} theme={theme} />
-            <g className="av-music">
-              <g transform="translate(72 232)"><g className="av-mnote"><circle r="3.6" fill={theme.a} /><path d="M3.2 0 V-15 q6 2 7 8" fill="none" stroke={theme.a} strokeWidth="2.3" strokeLinecap="round" /></g></g>
-              <g transform="translate(56 262)"><g className="av-mnote av-mnote--b"><circle r="3.6" fill={theme.b} /><path d="M3.2 0 V-15 q6 2 7 8" fill="none" stroke={theme.b} strokeWidth="2.3" strokeLinecap="round" /></g></g>
-            </g>
-            {showPlank && <Desk theme={theme} mug={config.mug} />}
-          </>
-        )}
-
-        {/* personnage : un seul groupe, pour que le contour (sticker, encre) l'enveloppe en entier */}
-        <g filter={personFilter ? `url(#st-${personFilter}-${uid})` : undefined}>
-          <g clipPath={showScene && showPlank ? `url(#${cutId})` : undefined}>
-            {/* cheveux arrière */}
-            <g transform={`translate(200 320) scale(${headScale}) translate(-200 -320)`}>
-              <g className="av-pose"><g className="av-hairback"><HairBack style={config.hair} tone={tone} /></g></g>
-            </g>
-
-            {/* buste : respiration + petites secousses de frappe */}
-            <g className="av-breathe">
-              <g className="av-typing">
-                <g transform={`translate(200 0) scale(${build} 1) translate(-200 0)`}>
-                  <Torso kind={config.outfit} color={outfitColor} skin={skin} />
-                  <Neck kind={config.neck} color={headColor} />
-                </g>
-              </g>
-            </g>
-
-            {live && <Arm outfit={config.outfit} color={outfitColor} skin={skin} theme={theme} />}
+      {showScene && (
+        <>
+          {showBackground && <Background theme={theme} patternId={gridId} />}
+          <Orbit theme={theme} />
+          <WallItem kind={config.wall} theme={theme} />
+          <CardItem kind={CARD_BY_CATEGORY[config.category] ?? "rien"} theme={theme} />
+          <Floaters kind={FLOATERS_BY_CATEGORY[config.category] ?? "etoiles"} theme={theme} />
+          <g className="av-music">
+            <g transform="translate(72 232)"><g className="av-mnote"><circle r="3.6" fill={theme.a} /><path d="M3.2 0 V-15 q6 2 7 8" fill="none" stroke={theme.a} strokeWidth="2.3" strokeLinecap="round" /></g></g>
+            <g transform="translate(56 262)"><g className="av-mnote av-mnote--b"><circle r="3.6" fill={theme.b} /><path d="M3.2 0 V-15 q6 2 7 8" fill="none" stroke={theme.b} strokeWidth="2.3" strokeLinecap="round" /></g></g>
           </g>
+          {/* l'idée et les effets passent DERRIÈRE le personnage : ils ne cachent ni le visage ni les chapeaux */}
+          {live && <Idea />}
+          {fx && <Effects kind={fx} />}
+          {showPlank && <Desk theme={theme} mug />}
+        </>
+      )}
 
-          {/* tête */}
-          <g transform={`translate(200 320) scale(${headScale}) translate(-200 -320)`}>
-            <g className="av-pose">
-              <g className="av-head">
-                <Ears skin={skin} />
-                <FaceBase skin={skin} shape={config.face} freckles={config.freckles} />
-                <FaceArt kind={config.faceArt} skin={skin} />
-                <FacialHair kind={config.facialHair} tone={tone} />
-                <Mouth skin={skin} expression={config.expression} lip={lip} />
-                <Brows tone={tone} expression={config.expression} />
-                <Eyes color={eyeColor} expression={config.expression} skin={skin} />
-                <Glasses kind={config.glasses} color={frameColor} lensId={lensId} />
-                <HairFront style={config.hair} tone={tone} shade={skin.shade} tie={theme.b} hideTop={hasHat} />
-                <Earrings kind={config.earrings} />
-                <Headwear kind={config.headwear} color={headColor} />
-                <g clipPath={showScene ? `url(#${cableId})` : undefined}>
-                  <Audio kind={config.earphones} accent={theme.a} />
-                </g>
-              </g>
+      {/* personnage */}
+      <g clipPath={showScene && showPlank ? `url(#${cutId})` : undefined}>
+        <g className="av-pose"><g className="av-hairback"><HairBack style={config.hair} tone={tone} /></g></g>
+
+        {/* buste : respiration + petites secousses de frappe */}
+        <g className="av-breathe">
+          <g className="av-typing">
+            <g transform={`translate(200 0) scale(${build} 1) translate(-200 0)`}>
+              <Torso kind={config.outfit} color={outfitColor} skin={skin} />
+              <Neck kind={config.neck} color={headColor} />
             </g>
           </g>
         </g>
 
-        {showScene && <DeskItem kind={config.desk} theme={theme} />}
-        {showScene && fx && <Effects kind={fx} />}
-        {live && <Idea />}
-        {live && <path className="av-pop" d="M296 160 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z" fill={theme.a} />}
-        {showBubble && <Bubble text={msg} />}
-        {showScene && <StyleOverlay uid={uid} style={config.style} />}
+        {live && <Arm outfit={config.outfit} color={outfitColor} skin={skin} theme={theme} />}
       </g>
+
+      {/* tête */}
+      <g className="av-pose">
+        <g className="av-head">
+          <Ears skin={skin} />
+          <FaceBase skin={skin} shape={config.face} freckles={config.freckles} />
+          <FaceArt kind={config.faceArt} skin={skin} />
+          <FacialHair kind={config.facialHair} tone={tone} />
+          <Mouth skin={skin} expression={config.expression} lip={lip} />
+          <Brows tone={tone} expression={config.expression} />
+          <Eyes color={eyeColor} expression={config.expression} skin={skin} />
+          <Glasses kind={config.glasses} color={frameColor} lensId={lensId} />
+          <HairFront style={config.hair} tone={tone} shade={skin.shade} tie={theme.b} hideTop={hasHat} />
+          <Earrings kind={config.earrings} />
+          <Headwear kind={config.headwear} color={headColor} />
+          <g clipPath={showScene ? `url(#${cableId})` : undefined}>
+            <Audio kind={config.earphones} accent={theme.a} />
+          </g>
+        </g>
+      </g>
+
+      {showScene && <DeskItem kind={config.desk} theme={theme} />}
+      {live && <path className="av-pop" d="M296 160 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z" fill={theme.a} />}
+      {showBubble && <Bubble text={msg} />}
     </svg>
   );
 });

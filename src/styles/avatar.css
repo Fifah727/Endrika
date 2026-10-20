@@ -5,7 +5,7 @@
      data-activity="…"      code | dance | chill | wave  (choix de l'utilisateur)
      data-wink="true"       clic : clin d'œil
      data-motion="full"     force les animations complètes (prop forceMotion)
-     data-static="true"     aperçus et export PNG : aucune animation
+     data-static="true"     aperçus de l'éditeur : aucune animation
    Variables posées en JS : --nx / --ny (curseur, de -1 à 1), --tempo (vitesse)
    ══════════════════════════════════════════════════════════════════════════ */
 
@@ -299,28 +299,6 @@
 }
 
 /* ══════════════════════════ ACTIVITÉS SUPPLÉMENTAIRES ═════════════════════ */
-/* Se concentrer : tête penchée sur le travail, regard baissé, frappe plus vive */
-.avatar[data-activity="focus"][data-state="code"] .av-pose { transform: rotate(-1.2deg) translate(0, 8px); }
-.avatar[data-activity="focus"][data-state="code"] .av-look { transform: translate(-0.5px, 5px); }
-.avatar[data-activity="focus"] .av-typing { animation-duration: calc(0.8s * var(--tempo, 1)); }
-.avatar[data-activity="focus"] .av-music { opacity: 0; }
-.avatar[data-activity="focus"][data-state="code"] .av-head,
-.avatar[data-activity="focus"][data-state="code"] .av-hairback {
-  animation: av-chill calc(6s * var(--tempo, 1)) ease-in-out infinite;
-}
-
-/* Réfléchir : les idées jaillissent, sourcils relevés, tête de côté */
-.avatar[data-activity="think"][data-state="code"] .av-pose { transform: rotate(3.4deg) translate(3px, -1px); }
-.avatar[data-activity="think"][data-state="code"] .av-look { transform: translate(3px, -2px); }
-.avatar[data-activity="think"][data-state="code"] .av-brows { transform: translateY(-4px); }
-.avatar[data-activity="think"] .av-idea,
-.avatar[data-activity="think"] .av-aha { animation-duration: calc(5s * var(--tempo, 1)); }
-.avatar[data-activity="think"] .av-music { opacity: 0; }
-.avatar[data-activity="think"][data-state="code"] .av-head,
-.avatar[data-activity="think"][data-state="code"] .av-hairback {
-  animation: av-chill calc(7s * var(--tempo, 1)) ease-in-out infinite;
-}
-
 /* Fêter ça : coucou permanent + rebonds (le buste et la tête sautent ensemble) */
 .avatar[data-activity="celebrate"] .av-breathe,
 .avatar[data-activity="celebrate"] .av-head,
@@ -401,10 +379,6 @@
   .avatar:not([data-motion="full"])[data-activity="dance"][data-state="hello"] .av-breathe,
   .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-head,
   .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-hairback,
-  .avatar:not([data-motion="full"])[data-activity="focus"][data-state="code"] .av-head,
-  .avatar:not([data-motion="full"])[data-activity="focus"][data-state="code"] .av-hairback,
-  .avatar:not([data-motion="full"])[data-activity="think"][data-state="code"] .av-head,
-  .avatar:not([data-motion="full"])[data-activity="think"][data-state="code"] .av-hairback,
   .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-breathe,
   .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-head,
   .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-hairback,

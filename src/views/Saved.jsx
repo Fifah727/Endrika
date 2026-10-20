@@ -4,7 +4,7 @@ import { RATIOS } from "../data/inspirations";
 
 const fmt = (ts) => new Date(ts).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
 
-function Item({ c, onOpen, onRename, onDuplicate, onRemove }) {
+function Item({ c, onOpen, onRename, onRemove }) {
   const [name, setName] = useState(c.name);
   const [confirm, setConfirm] = useState(false);
   return (
@@ -17,7 +17,6 @@ function Item({ c, onOpen, onRename, onDuplicate, onRemove }) {
         <p className="note">Modifiée le {fmt(c.updatedAt)}</p>
         <div className="saved__actions">
           <button type="button" className="btn btn--sm btn--primary" onClick={() => onOpen(c)}>Ouvrir</button>
-          <button type="button" className="btn btn--sm" onClick={() => onDuplicate(c.id)}>Dupliquer</button>
           {confirm ? (
             <>
               <button type="button" className="btn btn--sm btn--danger" onClick={() => onRemove(c.id)}>Confirmer</button>
@@ -32,7 +31,7 @@ function Item({ c, onOpen, onRename, onDuplicate, onRemove }) {
   );
 }
 
-export default function Saved({ creations, onOpen, onRename, onDuplicate, onRemove, onNew }) {
+export default function Saved({ creations, onOpen, onRename, onRemove, onNew }) {
   return (
     <div className="gallery">
       <section className="hero hero--small">
@@ -41,7 +40,7 @@ export default function Saved({ creations, onOpen, onRename, onDuplicate, onRemo
       </section>
       {creations.length ? (
         <div className="saved-grid">
-          {creations.map((c) => <Item key={c.id} c={c} onOpen={onOpen} onRename={onRename} onDuplicate={onDuplicate} onRemove={onRemove} />)}
+          {creations.map((c) => <Item key={c.id} c={c} onOpen={onOpen} onRename={onRename} onRemove={onRemove} />)}
         </div>
       ) : (
         <div className="empty">

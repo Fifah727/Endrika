@@ -144,7 +144,6 @@ export function Torso({ kind, color, skin }) {
         <path d="M172 300 L160 268 M228 300 L240 268" stroke={t.base} strokeWidth="7" strokeLinecap="round" />
         <path d="M168 300 H232 L242 376 H158 Z" fill={t.base} stroke={t.ring} strokeWidth="1.6" strokeLinejoin="round" />
         <path d="M178 336 H222 V362 H178 Z" fill="none" stroke={t.ring} strokeOpacity=".7" strokeWidth="2" strokeLinejoin="round" />
-        <path d="M60 360 C96 346 120 342 158 342" fill="none" stroke={t.base} strokeWidth="6" strokeLinecap="round" />
       </>
     );
   }

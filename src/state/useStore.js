@@ -41,13 +41,5 @@ export function useCreations(onError) {
   }, []);
   const rename = useCallback((id, name) => setList((l) => l.map((c) => (c.id === id ? { ...c, name: name.trim() || c.name } : c))), []);
   const remove = useCallback((id) => setList((l) => l.filter((c) => c.id !== id)), []);
-  const duplicate = useCallback((id) => {
-    setList((l) => {
-      const src = l.find((c) => c.id === id);
-      if (!src) return l;
-      const now = Date.now();
-      return [{ ...src, id: `c${now.toString(36)}d`, name: `${src.name} (copie)`, updatedAt: now }, ...l];
-    });
-  }, []);
-  return { creations: list, save, rename, remove, duplicate };
+  return { creations: list, save, rename, remove };
 }

@@ -52,21 +52,3 @@ export const clothTones = (base) => ({
   light: lighten(base, 0.18),
   collar: lum(base) > 0.75 ? "#FFFFFF" : lighten(base, 0.8),
 });
-
-/** Reconstruit une ambiance complète à partir d'une couleur de mur choisie librement. */
-export const deriveTheme = (base, bg) => {
-  const dark = lum(bg) < 0.4;
-  return {
-    ...base,
-    wall: bg,
-    dot: dark ? lighten(bg, 0.2) : darken(bg, 0.14),
-    plinth: dark ? darken(bg, 0.25) : darken(bg, 0.05),
-    plinthLine: dark ? lighten(bg, 0.12) : darken(bg, 0.12),
-    haloShadow: dark ? darken(bg, 0.35) : darken(bg, 0.1),
-    halo: dark ? lighten(bg, 0.14) : lighten(bg, 0.55),
-    ray: dark ? lighten(bg, 0.5) : "#FFFFFF",
-    rayOpacity: dark ? 0.12 : 0.35,
-    orbit: dark ? lighten(bg, 0.3) : darken(bg, 0.22),
-    dark,
-  };
-};

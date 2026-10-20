@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import Avatar from "../avatar/Avatar";
 import { byId } from "../avatar/catalog";
-import { deriveTheme } from "../avatar/color";
 import { COLLECTIONS } from "../data/collections";
 
 const none = new Set(["aucun", "aucune", "rien"]);
@@ -11,7 +10,6 @@ export function describe(c) {
   const label = (k) => byId(k, c[k]).label;
   const rows = [
     ["Univers", label("category")],
-    ["Style", label("style")],
     ["Ambiance", label("theme")],
     ["Coiffure", `${label("hair")}, ${label("hairColor").toLowerCase()}`],
     ["Tenue", label("outfit")],
@@ -28,8 +26,7 @@ export function describe(c) {
 }
 
 export function paletteOf(c) {
-  const base = byId("theme", c.theme);
-  const th = c.bgColor ? deriveTheme(base, c.bgColor) : base;
+  const th = byId("theme", c.theme);
   return [th.wall, byId("outfitColor", c.outfitColor).color, byId("hairColor", c.hairColor).color, th.a, th.b, th.c];
 }
 
@@ -67,7 +64,7 @@ export default function InspirationModal({ item, favorite, onToggleFavorite, onC
         </button>
         <div className="modal__stage"><Avatar config={item.config} variant="full" label={`Aperçu animé : ${item.title}`} /></div>
         <div className="modal__body">
-          <p className="modal__kicker">{col?.emoji} {col?.label}{item.generated ? " · remix" : ""}</p>
+          <p className="modal__kicker">{col?.emoji} {col?.label}</p>
           <h2 id="modal-title">{item.title}</h2>
           <p className="modal__note">{item.note}</p>
           <div className="swatchrow" aria-label="Palette de couleurs">

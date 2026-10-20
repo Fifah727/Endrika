@@ -12,7 +12,6 @@ export function sanitize(input = {}) {
     if (typeof v !== "string") continue;
     if (LISTS[key].some((o) => o.id === v) || (COLOR_KEYS.includes(key) && isHex(v))) out[key] = v;
   }
-  if (input.bgColor === "" || isHex(input.bgColor)) out.bgColor = input.bgColor;
   for (const key of FLAGS) {
     if (typeof input[key] === "boolean") out[key] = input[key];
   }
@@ -27,8 +26,8 @@ export function randomize(current, rng = Math.random) {
   const pick = (arr) => arr[Math.floor(rng() * arr.length)].id;
   const next = { ...current };
   for (const key of [
-    "skin", "face", "head", "build", "eyes", "expression", "hair", "hairColor", "glasses", "frame",
-    "headwear", "headColor", "earphones", "neck", "outfit", "outfitColor", "theme", "style",
+    "skin", "face", "build", "eyes", "expression", "hair", "hairColor", "glasses", "frame",
+    "headwear", "headColor", "earphones", "neck", "outfit", "outfitColor", "theme",
   ]) {
     next[key] = pick(LISTS[key]);
   }
@@ -39,7 +38,6 @@ export function randomize(current, rng = Math.random) {
   if (rng() < 0.35) next.glasses = "aucune";
   if (rng() < 0.55) next.headwear = "aucun";
   if (rng() < 0.6) next.neck = "aucun";
-  if (rng() < 0.7) next.style = "editorial";
   next.effect = rng() < 0.4 ? pick(LISTS.effect) : "aucun";
   return next;
 }
@@ -54,20 +52,12 @@ export function configToQuery(config) {
   return p.toString();
 }
 
-const LEGACY = {
-  laptop: (v) => ({ desk: v === "false" ? "rien" : "laptop" }),
-  shelves: (v) => ({ wall: v === "false" ? "rien" : "etageres" }),
-  codeCard: (v) => ({ card: v === "false" ? "rien" : "code" }),
-  symbols: (v) => ({ floaters: v === "false" ? "rien" : "code" }),
-};
-
 export function configFromQuery(query) {
   const p = new URLSearchParams(query || "");
   if ([...p.keys()].length === 0) return null;
   const raw = {};
   for (const [k, v] of p) {
-    if (LEGACY[k]) Object.assign(raw, LEGACY[k](v));
-    else raw[k] = FLAGS.includes(k) ? v === "true" : v;
+    raw[k] = FLAGS.includes(k) ? v === "true" : v;
   }
   return sanitize(raw);
 }

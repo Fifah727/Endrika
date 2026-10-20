@@ -25,15 +25,11 @@ const OPTIONS = {
   png: [{ key: "size", label: "Taille", values: [[512, "512 px"], [1024, "1024 px"], [2048, "2048 px"]] }],
   gif: [
     { key: "size", label: "Taille", values: [[320, "320 px"], [480, "480 px"], [640, "640 px"]] },
-    { key: "fps", label: "Fluidité", values: [[10, "10 i/s"], [12, "12 i/s"], [15, "15 i/s"], [20, "20 i/s"]] },
     { key: "duration", label: "Durée de la boucle", values: [[3, "3 s"], [6, "6 s"], [9, "9 s"]] },
   ],
   mp4: [
     { key: "size", label: "Taille", values: [[480, "480 px"], [720, "720 px"], [1080, "1080 px"]] },
-    { key: "fps", label: "Fluidité", values: [[24, "24 i/s"], [30, "30 i/s"]] },
-    { key: "duration", label: "Durée d'une boucle", values: [[3, "3 s"], [6, "6 s"], [9, "9 s"]] },
-    { key: "loops", label: "Répétitions", values: [[1, "×1"], [2, "×2"], [4, "×4"]] },
-    { key: "quality", label: "Qualité", values: [["eco", "Légère"], ["normal", "Standard"], ["max", "Maximale"]] },
+    { key: "duration", label: "Durée de la boucle", values: [[3, "3 s"], [6, "6 s"], [9, "9 s"]] },
   ],
   svg: [],
 };
@@ -123,7 +119,7 @@ export default function ExportPanel({ config, onToast }) {
           </label>
         )}
         {format === "gif" && o.bg === "transparent" && <p className="note">Le GIF gère une transparence sans demi-teintes : les bords peuvent être légèrement crénelés.</p>}
-        {format === "mp4" && <p className="note">La vidéo est en boucle parfaite : plus tu répètes, plus elle est longue.</p>}
+        {format === "mp4" && <p className="note">La vidéo contient la boucle deux fois de suite.</p>}
         {format === "svg" && <p className="note">Le SVG contient ses animations : ouvre-le dans un navigateur ou dans une balise &lt;img&gt;.</p>}
         {mp4Missing && <p className="note note--warn">Ce navigateur ne sait pas encoder de MP4. Essaie Chrome, Edge ou Safari récent, ou choisis le GIF.</p>}
       </div>

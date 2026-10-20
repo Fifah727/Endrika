@@ -1,32 +1,18 @@
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import Avatar from "../avatar/Avatar";
-import { CATEGORIES, COLOR_KEYS, CROPS, LISTS, LOOKS, PALETTES, byId, isHex } from "../avatar/catalog";
+import { CATEGORIES, COLOR_KEYS, CROPS, LISTS, byId, isHex } from "../avatar/catalog";
 
 // Aperçu figé d'une option, avec le reste de la configuration actuelle
 const Thumb = memo(function Thumb({ config, crop, variant }) {
   return <Avatar config={config} variant={variant} crop={CROPS[crop] ?? crop} />;
 });
 
-const visible = (o, config, selected, mode) =>
-  mode === "all" || selected || !o.tags || config.category === "libre" || o.tags.includes(config.category);
-
-// Les options pensées pour l'univers choisi passent en premier ; on peut tout mélanger.
+// Les options pensées pour l'univers choisi passent en premier ; tout reste accessible.
 const fits = (o, config) => Boolean(o.tags?.includes(config.category)) && config.category !== "libre";
 const rank = (o, config) => (fits(o, config) ? 0 : !o.tags ? 1 : 2);
 const ordered = (options, config) => options.map((o, i) => [o, i]).sort((a, b) => rank(a[0], config) - rank(b[0], config) || a[1] - b[1]);
 
-/** Petit sélecteur « Pour mon univers / Tout » : permet de mélanger les catégories. */
-function Scope({ mode, onChange }) {
-  return (
-    <div className="scope" role="group" aria-label="Filtrer les options">
-      {[["all", "Tout"], ["univers", "Pour mon univers"]].map(([id, label]) => (
-        <button key={id} type="button" aria-pressed={mode === id} onClick={() => onChange(id)}>{label}</button>
-      ))}
-    </div>
-  );
-}
-
-function ThumbGroup({ group, config, onPick, mode }) {
+function ThumbGroup({ group, config, onPick }) {
   const options = LISTS[group.key];
   const previews = useMemo(
     () => options.map((o) => ({ ...config, ...group.preview, [group.key]: o.id })),
@@ -36,10 +22,9 @@ function ThumbGroup({ group, config, onPick, mode }) {
     <div className="grid grid--thumbs" role="radiogroup" aria-label={group.label}>
       {ordered(options, config).map(([o, i]) => {
         const selected = config[group.key] === o.id;
-        if (!visible(o, config, selected, mode)) return null;
         return (
           <button key={o.id} type="button" role="radio" aria-checked={selected} className="tile" onClick={() => onPick(group.key, o.id)}>
-            <span className="tile__art"><Thumb config={previews[i]} crop={group.crop} variant={group.variant ?? "thumb"} />{group.tagged && fits(o, config) && <b className="tile__star" title="Pensé pour ton univers" aria-label="Pensé pour ton univers">★</b>}</span>
+            <span className="tile__art"><Thumb config={previews[i]} crop={group.crop} variant={group.variant ?? "thumb"} /></span>
             <span className="tile__label">{o.label}</span>
           </button>
         );
@@ -98,27 +83,12 @@ function ThemeGroup({ group, config, onPick }) {
   );
 }
 
-function BgColor({ config, onPick }) {
-  const has = Boolean(config.bgColor);
-  const theme = byId("theme", config.theme);
-  return (
-    <div className="bgcolor">
-      <label className="bgcolor__field">
-        <input type="color" aria-label="Couleur du mur" value={has ? config.bgColor : theme.wall} onChange={(e) => onPick("bgColor", e.target.value.toUpperCase(), "color:bg")} />
-        <span>{has ? config.bgColor : "Couleur de l'ambiance"}</span>
-      </label>
-      {has && <button type="button" className="linkbtn" onClick={() => onPick("bgColor", "")}>Revenir à l'ambiance</button>}
-    </div>
-  );
-}
-
-function Chips({ group, config, onPick, mode }) {
+function Chips({ group, config, onPick }) {
   const options = LISTS[group.key];
   return (
     <div className="chips" role="radiogroup" aria-label={group.label}>
       {ordered(options, config).map(([o]) => {
         const selected = config[group.key] === o.id;
-        if (!visible(o, config, selected, mode)) return null;
         return (
           <button key={o.id} type="button" role="radio" aria-checked={selected} className="chip" onClick={() => onPick(group.key, o.id)}>
             {o.emoji && <span className="chip__emoji" aria-hidden="true">{o.emoji}</span>}{o.label}
@@ -157,33 +127,6 @@ function CategoryGroup({ config, onApply }) {
   );
 }
 
-function LooksGroup({ config, onApply }) {
-  const looks = LOOKS.filter((l) => config.category === "libre" || l.cat === config.category);
-  const shown = looks.length ? looks : LOOKS;
-  return (
-    <div className="chips">
-      {shown.map((l) => (
-        <button key={l.id} type="button" className="chip" onClick={() => onApply({ ...l.patch, category: l.cat })}>
-          <span className="chip__emoji" aria-hidden="true">{l.emoji}</span>{l.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function PaletteGroup({ config, onApply }) {
-  return (
-    <div className="palettes">
-      {PALETTES.map((p) => (
-        <button key={p.id} type="button" className="palette" aria-pressed={config.theme === p.patch.theme && config.outfitColor === p.patch.outfitColor} onClick={() => onApply(p.patch)}>
-          <span className="palette__dots" aria-hidden="true">{p.colors.map((c) => <i key={c} style={{ background: c }} />)}</span>
-          <span className="palette__label">{p.label}</span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function Toggle({ group, config, onPick }) {
   const on = config[group.key];
   return (
@@ -195,21 +138,17 @@ function Toggle({ group, config, onPick }) {
 }
 
 export default function Group({ group, config, onPick, onApply }) {
-  const [mode, setMode] = useState("all");
   if (group.when && !group.when(config)) return null;
   if (group.kind === "toggle") return <Toggle group={group} config={config} onPick={onPick} />;
 
-  const current = group.key && LISTS[group.key] && !["bgColor"].includes(group.key) ? byId(group.key, config[group.key]).label : null;
+  const current = group.key && LISTS[group.key] ? byId(group.key, config[group.key]).label : null;
   let body;
   switch (group.kind) {
     case "category": body = <CategoryGroup config={config} onApply={onApply} />; break;
-    case "looks": body = <LooksGroup config={config} onApply={onApply} />; break;
-    case "palette": body = <PaletteGroup config={config} onApply={onApply} />; break;
-    case "thumb": body = <ThumbGroup group={group} config={config} onPick={onPick} mode={mode} />; break;
+    case "thumb": body = <ThumbGroup group={group} config={config} onPick={onPick} />; break;
     case "swatch": body = <SwatchGroup group={group} config={config} onPick={onPick} />; break;
     case "theme": body = <ThemeGroup group={group} config={config} onPick={onPick} />; break;
-    case "bgcolor": body = <BgColor config={config} onPick={onPick} />; break;
-    case "chips": body = <Chips group={group} config={config} onPick={onPick} mode={mode} />; break;
+    case "chips": body = <Chips group={group} config={config} onPick={onPick} />; break;
     case "text": body = <TextGroup group={group} config={config} onPick={onPick} />; break;
     default: body = null;
   }
@@ -218,7 +157,7 @@ export default function Group({ group, config, onPick, onApply }) {
     <section className="group">
       <header className="group__head">
         <h3>{group.label}</h3>
-        {group.tagged && config.category !== "libre" ? <Scope mode={mode} onChange={setMode} /> : current && <span className="group__value">{current}</span>}
+        {current && <span className="group__value">{current}</span>}
       </header>
       {body}
     </section>
