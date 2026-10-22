@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { CATEGORIES } from "../avatar/catalog";
 import { lum } from "../avatar/color";
+import Heart from "../components/Heart";
 import InspirationCard from "../components/InspirationCard";
 import InspirationModal from "../components/InspirationModal";
 import { COLLECTIONS } from "../data/collections";
@@ -30,8 +31,7 @@ export default function Gallery({ favorites, isFavorite, onToggleFavorite, onCre
         <p className="hero__lead">Crée un avatar animé qui te ressemble, quel que soit ton métier, tes études ou ta passion. Inspire-toi, personnalise chaque détail, puis télécharge-le.</p>
         <div className="starters" role="group" aria-label="Commencer avec un univers">
           {CATEGORIES.map((c) => (
-            <button key={c.id} type="button" className="starter" onClick={() => onQuickStart(c.id)}>
-              <span className="starter__emoji" aria-hidden="true">{c.emoji}</span>
+            <button key={c.id} type="button" className="starter" style={{ "--tint": c.tint }} onClick={() => onQuickStart(c.id)}>
               <span className="starter__title">{c.label}</span>
               <span className="starter__blurb">{c.blurb}</span>
             </button>
@@ -45,7 +45,7 @@ export default function Gallery({ favorites, isFavorite, onToggleFavorite, onCre
         <div className="collections" role="group" aria-label="Collections">
           {COLLECTIONS.map((c) => (
             <button key={c.id} type="button" className="collection" aria-pressed={filters.collection === c.id} style={{ "--tint": c.tint, color: lum(c.tint) < 0.4 ? "#fff" : undefined }} onClick={() => toggle("collection", c.id)}>
-              <span aria-hidden="true">{c.emoji}</span> {c.label}
+              {c.label}
             </button>
           ))}
         </div>
@@ -53,11 +53,11 @@ export default function Gallery({ favorites, isFavorite, onToggleFavorite, onCre
         <div className="filters">
           <div className="filter" role="group" aria-label="Catégorie d'avatar">
             {CATEGORIES.map((c) => (
-              <button key={c.id} type="button" className="chip chip--sm" aria-pressed={filters.category === c.id} onClick={() => toggle("category", c.id)}>{c.emoji} {c.label}</button>
+              <button key={c.id} type="button" className="chip chip--sm" aria-pressed={filters.category === c.id} onClick={() => toggle("category", c.id)}>{c.label}</button>
             ))}
           </div>
           <div className="filter filter--end">
-            <button type="button" className="chip chip--sm" aria-pressed={filters.favorites} onClick={() => setFilters((f) => ({ ...f, favorites: !f.favorites }))}>♥ Favoris{favorites.length ? ` (${favorites.length})` : ""}</button>
+            <button type="button" className="chip chip--sm" aria-pressed={filters.favorites} onClick={() => setFilters((f) => ({ ...f, favorites: !f.favorites }))}><Heart /> Favoris{favorites.length ? ` (${favorites.length})` : ""}</button>
             {active && <button type="button" className="linkbtn" onClick={() => setFilters(EMPTY)}>Tout effacer</button>}
           </div>
         </div>

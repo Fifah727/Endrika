@@ -3,7 +3,6 @@
      data-state="code"      au travail, souriante, en musique (défaut)
      data-state="hello"     survol / tap / activité « coucou » : te regarde et salue
      data-activity="…"      code | dance | chill | wave  (choix de l'utilisateur)
-     data-wink="true"       clic : clin d'œil
      data-motion="full"     force les animations complètes (prop forceMotion)
      data-static="true"     aperçus de l'éditeur : aucune animation
    Variables posées en JS : --nx / --ny (curseur, de -1 à 1), --tempo (vitesse)
@@ -96,12 +95,6 @@
   animation: av-idea 10s ease-in-out 1.5s infinite;
 }
 .av-aha { animation: av-aha 10s ease-in-out 1.5s infinite; }
-/* étoile du clin d'œil */
-.av-pop {
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-}
 
 /* ══════════════════════════ ÉTAT « HELLO » ════════════════════════════════ */
 /* la tête se redresse et se tourne un peu vers le curseur ; les yeux le suivent */
@@ -136,26 +129,17 @@
 /* elle arrête de coder pour dire bonjour */
 .avatar[data-state="hello"] .av-line { animation-play-state: paused; }
 
-/* ── Clin d'œil (clic) ──────────────────────────────────────────────────── */
-.avatar[data-wink="true"] .av-eye-r {
-  animation: none;
-  transform: scaleY(0.08);
-}
-.avatar[data-wink="true"] .av-pop {
-  animation: av-pop 0.7s var(--av-spring) both;
-}
-
 /* ══════════════════════════ ACTIVITÉS ═════════════════════════════════════ */
 /* Danser : le buste et la tête partagent exactement la même oscillation
    autour du bas du buste, pour rester collés l'un à l'autre. */
 .avatar[data-activity="dance"] .av-breathe {
   transform-origin: 200px 400px;
-  animation: av-dance calc(1.6s * var(--tempo, 1)) ease-in-out infinite;
+  animation: av-dance calc(1.2s * var(--tempo, 1)) ease-in-out infinite;
 }
 .avatar[data-activity="dance"][data-state="code"] .av-head,
 .avatar[data-activity="dance"][data-state="code"] .av-hairback {
   transform-origin: 200px 400px;
-  animation: av-dance calc(1.6s * var(--tempo, 1)) ease-in-out infinite;
+  animation: av-dance calc(1.2s * var(--tempo, 1)) ease-in-out infinite;
 }
 /* pendant un coucou, le buste se calme */
 .avatar[data-activity="dance"][data-state="hello"] .av-breathe {
@@ -167,10 +151,12 @@
 .avatar[data-activity="chill"] .av-breathe { animation-duration: calc(7s * var(--tempo, 1)); }
 .avatar[data-activity="chill"][data-state="code"] .av-head,
 .avatar[data-activity="chill"][data-state="code"] .av-hairback {
-  animation: av-chill calc(8s * var(--tempo, 1)) ease-in-out infinite;
+  animation: av-chill calc(6s * var(--tempo, 1)) ease-in-out infinite;
 }
 .avatar[data-activity="chill"][data-state="code"] .av-hairback { animation-delay: -0.4s; }
 .avatar[data-activity="chill"] .av-music { opacity: 0; }
+.avatar[data-activity="chill"][data-state="code"] .av-eye-l,
+.avatar[data-activity="chill"][data-state="code"] .av-eye-r { animation: av-doze calc(8s * var(--tempo, 1)) ease-in-out infinite; }
 .avatar[data-activity="chill"] .av-line { animation-duration: 6s; }
 
 /* ══════════════════════════ KEYFRAMES ═════════════════════════════════════ */
@@ -180,20 +166,25 @@
 }
 /* « head bop » : deux rebonds par cycle */
 @keyframes av-bop {
-  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
-  25%      { transform: translateY(-3px) rotate(0.2deg); }
-  50%      { transform: translateY(0) rotate(1.4deg); }
-  75%      { transform: translateY(-3px) rotate(0.2deg); }
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  25%      { transform: translateY(-5px) rotate(0.3deg); }
+  50%      { transform: translateY(0) rotate(2.2deg); }
+  75%      { transform: translateY(-5px) rotate(0.3deg); }
 }
 @keyframes av-dance {
-  0%, 100% { transform: translateY(0) rotate(-2.2deg); }
-  25%      { transform: translateY(-5px) rotate(0deg); }
-  50%      { transform: translateY(0) rotate(2.2deg); }
-  75%      { transform: translateY(-5px) rotate(0deg); }
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  25%      { transform: translateY(-10px) rotate(0deg); }
+  50%      { transform: translateY(0) rotate(5deg); }
+  75%      { transform: translateY(-10px) rotate(0deg); }
 }
 @keyframes av-chill {
-  0%, 100% { transform: translateY(0) rotate(-0.8deg); }
-  50%      { transform: translateY(-2px) rotate(0.8deg); }
+  0%, 100% { transform: translateY(0) rotate(-2.4deg); }
+  50%      { transform: translateY(3px) rotate(2.4deg); }
+}
+/* yeux qui se ferment doucement, comme quand on se détend */
+@keyframes av-doze {
+  0%, 12%, 88%, 100% { transform: scaleY(1); }
+  30%, 70%           { transform: scaleY(0.08); }
 }
 @keyframes av-breathe {
   0%, 100% { transform: scaleY(1); }
@@ -268,11 +259,6 @@
   0%, 36%, 76%, 100% { transform: translateY(0); }
   41%, 70%           { transform: translateY(-4px); }
 }
-@keyframes av-pop {
-  0%   { opacity: 0; transform: scale(0.3) rotate(-30deg); }
-  40%  { opacity: 1; transform: scale(1.2) rotate(0deg); }
-  100% { opacity: 0; transform: scale(1) rotate(20deg); }
-}
 
 /* ══════════════════════════ REFLETS D'ÉCRAN DANS LES LUNETTES ═════════════ */
 .avatar .av-reflect { transition: opacity 0.3s ease; }
@@ -303,12 +289,12 @@
 .avatar[data-activity="celebrate"] .av-breathe,
 .avatar[data-activity="celebrate"] .av-head,
 .avatar[data-activity="celebrate"] .av-hairback {
-  animation: av-bounce calc(0.8s * var(--tempo, 1)) ease-in-out infinite;
+  animation: av-bounce calc(0.6s * var(--tempo, 1)) ease-in-out infinite;
 }
 
 @keyframes av-bounce {
   0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
+  50%      { transform: translateY(-11px); }
 }
 
 /* ── Effets décoratifs (particules) ─────────────────────────────────────── */
@@ -382,6 +368,8 @@
   .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-breathe,
   .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-head,
   .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-hairback,
+  .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-eye-l,
+  .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-eye-r,
   .avatar:not([data-motion="full"]) .av-fx,
   .avatar:not([data-motion="full"]) .av-write,
   .avatar:not([data-motion="full"]) .av-draw,

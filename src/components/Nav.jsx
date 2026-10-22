@@ -1,3 +1,5 @@
+import Logo from "./Logo";
+
 export default function Nav({ route, onGo, count }) {
   const items = [
     ["inspirations", "Inspirations"],
@@ -7,7 +9,7 @@ export default function Nav({ route, onGo, count }) {
   return (
     <header className="nav">
       <a className="brand" href="#/" onClick={(e) => { e.preventDefault(); onGo("inspirations"); }} aria-label="Endrika, accueil">
-        <span className="brand__mark" aria-hidden="true" />
+        <Logo size={34} />
         <span className="brand__name">Endrika</span>
       </a>
       <nav aria-label="Navigation principale">

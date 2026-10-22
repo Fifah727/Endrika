@@ -6,12 +6,12 @@ Plateforme pour créer un **avatar animé personnalisé**, quel que soit ton mé
 
 ## Ce que fait Endrika
 
-**Inspirations** : galerie masonry de 38 inspirations en 10 collections (Cute & Coquette, Soft Pastel, Dark Academia, Dreamy, Artistic Soul, Digital Creator, Study Vibes, Minimal, Ocean, Fantasy). Filtres par collection et par catégorie, favoris, et « Créer à partir de cette inspiration » (chaque inspiration est une vraie configuration modifiable).
+**Inspirations** : galerie masonry de 12 inspirations en 7 collections (Cute & Coquette, Dark Academia, Dreamy & Ethereal, Artistic Soul, Digital Creator, Study Vibes, Ocean Aesthetic). Filtres par collection et par catégorie, favoris, et « Créer à partir de cette inspiration » (chaque inspiration est une vraie configuration modifiable).
 
 **Éditeur en 6 étapes** : Univers · Personnage · Look · Décor · Animation · Exporter.
 
-- **5 univers** : Développeur 💻, Étudiant 📚, Autres métiers 💼, Créatif 🎨, Personnalisation libre ✨. Chaque univers met en avant ses objets (ordinateur, cahier, tablette graphique, stéthoscope…) en premier, mais tout reste accessible : on peut mélanger les catégories.
-- 15 coiffures, 5 formes de visage, 7 expressions, 10 tenues, 12 couvre-chefs, 8 accessoires de cou, 11 objets de bureau, 14 ambiances, effets de particules, 5 activités animées, couleurs libres pour les cheveux et les vêtements.
+- **5 univers** : Développeur, Étudiant, Autres métiers, Créatif, Personnalisation libre. Chaque univers met en avant ses objets (ordinateur, cahier, tablette graphique, stéthoscope…) en premier, mais tout reste accessible : on peut mélanger les catégories.
+- 15 coiffures, 5 formes de visage, 7 expressions, 10 tenues, 12 couvre-chefs, 8 accessoires de cou, 11 objets de bureau, 14 ambiances, effets de particules, 5 activités animées (travail en musique, détente, danse, coucou, fête), couleurs libres pour les cheveux et les vêtements.
 - **Annuler / rétablir** (Ctrl+Z, Ctrl+Maj+Z), réinitialiser, aléatoire, **lien partageable**, **enregistrement** des créations (« Mes créations », sur l'appareil).
 
 **Exports réels** (générés dans le navigateur) :
@@ -46,7 +46,7 @@ src/
   App.jsx, main.jsx         application, navigation par hash, écrans chargés à la demande
   views/                    Gallery (inspirations), Editor (6 étapes), Saved (mes créations)
   components/               Nav, InspirationCard, InspirationModal, Skeleton, ErrorBoundary
-  data/                     collections.js, inspirations.js (38 configurations)
+  data/                     collections.js, inspirations.js (12 configurations)
   state/                    useHistory (annuler/rétablir), useRoute, useStore (favoris, créations)
   avatar/
     catalog.js              TOUTES les options, palettes, catégories, looks
@@ -66,9 +66,13 @@ src/
 - **Une inspiration** : une ligne `I(...)` dans `src/data/inspirations.js` (n'importe quelle combinaison d'options valides).
 - **Une collection** : une entrée dans `src/data/collections.js`.
 
+## Cohérence de l'avatar
+
+Les accessoires de cou ne se proposent qu'avec les vêtements qui vont avec (cravate : chemise, blazer, uniforme…), un casque audio ne se porte pas avec un couvre-chef, la toque, le casque de chantier et le mortier reprennent leur couleur naturelle, et les accessoires sont assortis au vêtement par défaut. Le tirage « Aléatoire » respecte ces règles (`harmonize` dans `src/avatar/config.js`).
+
 ## Ce qui a été volontairement retiré (à rajouter plus tard si besoin)
 
-Pour garder le site léger et fiable : styles artistiques par filtres (Sticker, Encre, Pastel, Rétro, Rêverie), générateur de « remix », looks prêts à l'emploi, palettes, couleur de mur libre, proportions « chibi », réglages de la bulle et du survol, tasse/orbite en option, filtres par couleur et par style dans la galerie, duplication des créations, options d'export avancées (fluidité, répétitions, qualité).
+Pour garder le site léger et fiable : styles artistiques par filtres (Sticker, Encre, Pastel, Rétro, Rêverie), générateur de « remix », looks prêts à l'emploi, palettes, couleur de mur libre, proportions « chibi », réglages de la bulle et du survol, tasse/orbite en option, filtres par couleur et par style dans la galerie, duplication des créations, options d'export avancées (fluidité, répétitions, qualité), clin d'œil au clic (il ne fermait qu'un œil), 26 inspirations et 3 collections.
 
 ## Comment fonctionnent les exports
 

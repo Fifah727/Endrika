@@ -28,7 +28,7 @@ export const STEPS = [
       { key: "glasses", kind: "thumb", crop: "eyes", label: "Lunettes" },
       { key: "frame", kind: "swatch", label: "Monture", when: (c) => c.glasses !== "aucune" },
       { key: "headwear", kind: "thumb", crop: "head", label: "Couvre-chef", tagged: true },
-      { key: "headColor", kind: "swatch", label: "Couleur des accessoires", when: (c) => c.headwear !== "aucun" || c.neck !== "aucun" },
+      { key: "headColor", kind: "swatch", label: "Couleur des accessoires et du couvre-chef", when: (c) => c.headwear !== "aucun" || c.neck !== "aucun" },
       { key: "earphones", kind: "thumb", crop: "head", label: "Audio", tagged: true },
       { key: "earrings", kind: "thumb", crop: "ears", label: "Boucles d'oreilles" },
     ],

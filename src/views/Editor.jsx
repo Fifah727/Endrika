@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Avatar from "../avatar/Avatar";
 import { DEFAULTS } from "../avatar/catalog";
-import { applyPatch, configToQuery, randomize, saveConfig } from "../avatar/config";
+import { applyPatch, configToQuery, harmonize, randomize, saveConfig } from "../avatar/config";
 import useHistory from "../state/useHistory";
 import ExportPanel from "../ui/ExportPanel";
 import { copyText } from "../ui/export";
@@ -28,7 +28,7 @@ export default function Editor({ seed, onSave, toast, onOpenSaved, onDraft }) {
     history_replace(`#/creer?${q}${extra}`);
   }, [config, creationId, onDraft]);
 
-  const pick = useCallback((key, value, coalesce) => set((c) => ({ ...c, [key]: value }), coalesce ?? null), [set]);
+  const pick = useCallback((key, value, coalesce) => set((c) => harmonize({ ...c, [key]: value }, key), coalesce ?? null), [set]);
   const apply = useCallback((patch) => set((c) => applyPatch(c, patch)), [set]);
 
   // Raccourcis : Ctrl/Cmd+Z, Ctrl/Cmd+Maj+Z ou Ctrl+Y
@@ -54,6 +54,12 @@ export default function Editor({ seed, onSave, toast, onOpenSaved, onDraft }) {
     toast(ok ? "Lien copié" : "Copie impossible : copie l'adresse du navigateur");
   };
 
+  // L'étape active reste visible dans la barre d'étapes (utile sur mobile)
+  useEffect(() => {
+    document.getElementById(`tab-${step}`)?.scrollIntoView?.({ inline: "center", block: "nearest" });
+  }, [step]);
+
+  const reducedMotion = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
   const idx = STEPS.findIndex((s) => s.id === step);
   const current = STEPS[idx];
 
@@ -73,7 +79,7 @@ export default function Editor({ seed, onSave, toast, onOpenSaved, onDraft }) {
   return (
     <div className="editor">
       <section className="stage" aria-label="Aperçu de l'avatar">
-        <div className="stage__frame"><Avatar config={config} label="Aperçu de ton avatar animé" /></div>
+        <div className="stage__frame"><Avatar config={config} forceMotion label="Aperçu de ton avatar animé" /></div>
         <div className="toolbar" role="toolbar" aria-label="Actions">
           <div className="toolbar__group">
           <button type="button" className="iconbtn" onClick={undo} disabled={!canUndo} aria-label="Annuler" title="Annuler (Ctrl+Z)"><Icon d="M9 7H15a5 5 0 010 10H8M9 7L5 11M9 7l-4-4" /></button>
@@ -86,7 +92,7 @@ export default function Editor({ seed, onSave, toast, onOpenSaved, onDraft }) {
           <button type="button" className="btn btn--primary" onClick={onSaveClick}>{creationId ? "Mettre à jour" : "Enregistrer"}</button>
           </div>
         </div>
-        <p className="stage__tip">Survole l'avatar : il te regarde et te salue. Clique pour un clin d'œil.</p>
+        <p className="stage__tip">Survole l'avatar : il te regarde et te salue.</p>
       </section>
 
       <section className="panel" aria-label="Personnalisation">
@@ -111,6 +117,9 @@ export default function Editor({ seed, onSave, toast, onOpenSaved, onDraft }) {
 
         <div className="panel__body" role="tabpanel" id={`panel-${current.id}`} aria-labelledby={`tab-${current.id}`}>
           <p className="panel__hint">{current.hint}</p>
+          {current.id === "anim" && reducedMotion && (
+            <p className="note note--info">Ton appareil demande de réduire les animations. L'aperçu les joue quand même pour que tu voies le résultat ; les fichiers exportés les contiennent.</p>
+          )}
           {current.id === "export" ? (
             <ExportPanel config={config} onToast={toast} />
           ) : (

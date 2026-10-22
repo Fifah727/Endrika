@@ -8,15 +8,15 @@
 
 // ── Catégories d'univers ───────────────────────────────────────────────────
 export const CATEGORIES = [
-  { id: "dev", emoji: "💻", label: "Développeur", blurb: "Ordinateur, clavier, fenêtre de code et accessoires tech",
+  { id: "dev", tint: "#D6E9EA", label: "Développeur", blurb: "Ordinateur, clavier, fenêtre de code et accessoires tech",
     patch: { desk: "laptop", wall: "etageres", earphones: "filaires" } },
-  { id: "etudiant", emoji: "📚", label: "Étudiant", blurb: "Cahiers, livres, stylos, tableau et petits mots",
+  { id: "etudiant", tint: "#DDEBD3", label: "Étudiant", blurb: "Cahiers, livres, stylos, tableau et petits mots",
     patch: { desk: "cahier", wall: "tableau", earphones: "aucun" } },
-  { id: "metier", emoji: "💼", label: "Autres métiers", blurb: "Santé, cuisine, chantier, bureau, enseignement…",
+  { id: "metier", tint: "#F7DCCB", label: "Autres métiers", blurb: "Santé, cuisine, chantier, bureau, enseignement…",
     patch: { desk: "dossier", wall: "cadres", earphones: "aucun" } },
-  { id: "creatif", emoji: "🎨", label: "Créatif", blurb: "Dessin, photo, musique, couleurs et inspiration",
+  { id: "creatif", tint: "#E4DDF0", label: "Créatif", blurb: "Dessin, photo, musique, couleurs et inspiration",
     patch: { desk: "tablette", wall: "guirlande", earphones: "casque" } },
-  { id: "libre", emoji: "✨", label: "Personnalisation libre", blurb: "Aucun thème imposé : tu composes tout toi-même",
+  { id: "libre", tint: "#FCD9E4", label: "Personnalisation libre", blurb: "Aucun thème imposé : tu composes tout toi-même",
     patch: { desk: "rien", wall: "rien", effect: "etoiles", earphones: "aucun" } },
 ];
 
@@ -200,41 +200,44 @@ export const CLOTH_COLORS = [
 
 // ── Décor : objet principal, mur, fenêtre, symboles, effets ────────────────
 export const DESKS = [
-  { id: "laptop", label: "Ordinateur portable", emoji: "💻", tags: ["dev"], hides: true },
-  { id: "clavier", label: "Clavier mécanique", emoji: "⌨️", tags: ["dev"] },
-  { id: "cahier", label: "Cahier ouvert", emoji: "📓", tags: ["etudiant"] },
-  { id: "livre", label: "Gros livre", emoji: "📖", tags: ["etudiant", "metier"] },
-  { id: "tablette", label: "Tablette graphique", emoji: "🖊️", tags: ["creatif"] },
-  { id: "dossier", label: "Dossiers et stylo", emoji: "🗂️", tags: ["metier"] },
-  { id: "camera", label: "Appareil photo", emoji: "📷", tags: ["creatif"] },
-  { id: "piano", label: "Clavier de piano", emoji: "🎹", tags: ["creatif"] },
-  { id: "planche", label: "Planche de cuisine", emoji: "🥕", tags: ["metier"] },
-  { id: "outils", label: "Caisse à outils", emoji: "🧰", tags: ["metier"] },
-  { id: "trousse", label: "Trousse de soins", emoji: "🩹", tags: ["metier"] },
-  { id: "rien", label: "Rien", emoji: "◻︎" },
+  { id: "laptop", label: "Ordinateur portable", tags: ["dev"], hides: true },
+  { id: "clavier", label: "Clavier mécanique", tags: ["dev"] },
+  { id: "cahier", label: "Cahier ouvert", tags: ["etudiant"] },
+  { id: "livre", label: "Gros livre", tags: ["etudiant", "metier"] },
+  { id: "tablette", label: "Tablette graphique", tags: ["creatif"] },
+  { id: "dossier", label: "Dossiers et stylo", tags: ["metier"] },
+  { id: "camera", label: "Appareil photo", tags: ["creatif"] },
+  { id: "piano", label: "Clavier de piano", tags: ["creatif"] },
+  { id: "planche", label: "Planche de cuisine", tags: ["metier"] },
+  { id: "outils", label: "Caisse à outils", tags: ["metier"] },
+  { id: "trousse", label: "Trousse de soins", tags: ["metier"] },
+  { id: "rien", label: "Rien" },
 ];
 
 export const WALLS = [
-  { id: "etageres", label: "Étagères", emoji: "📚", tags: ["dev", "etudiant"] },
-  { id: "cadres", label: "Cadres", emoji: "🖼️", tags: ["metier", "creatif"] },
-  { id: "guirlande", label: "Guirlande lumineuse", emoji: "💡", tags: ["creatif"] },
-  { id: "neon", label: "Enseigne néon", emoji: "🌟", tags: ["creatif", "dev"] },
-  { id: "tableau", label: "Tableau noir", emoji: "🧮", tags: ["etudiant", "metier"] },
-  { id: "rien", label: "Mur nu", emoji: "◻︎" },
+  { id: "etageres", label: "Étagères", tags: ["dev", "etudiant"] },
+  { id: "cadres", label: "Cadres", tags: ["metier", "creatif"] },
+  { id: "guirlande", label: "Guirlande lumineuse", tags: ["creatif"] },
+  { id: "neon", label: "Enseigne néon", tags: ["creatif", "dev"] },
+  { id: "tableau", label: "Tableau noir", tags: ["etudiant", "metier"] },
+  { id: "rien", label: "Mur nu" },
 ];
 
 export const EFFECTS = [
-  { id: "aucun", label: "Aucun", emoji: "◻︎" },
-  { id: "etoiles", label: "Étoiles", emoji: "✨" },
-  { id: "petales", label: "Pétales", emoji: "🌸" },
-  { id: "bulles", label: "Bulles", emoji: "🫧" },
-  { id: "neige", label: "Neige", emoji: "❄️" },
-  { id: "lucioles", label: "Lucioles", emoji: "🪄" },
-  { id: "confettis", label: "Confettis", emoji: "🎉" },
-  { id: "coeurs", label: "Cœurs", emoji: "💗" },
+  { id: "aucun", label: "Aucun" },
+  { id: "etoiles", label: "Étoiles" },
+  { id: "petales", label: "Pétales" },
+  { id: "bulles", label: "Bulles" },
+  { id: "neige", label: "Neige" },
+  { id: "lucioles", label: "Lucioles" },
+  { id: "confettis", label: "Confettis" },
+  { id: "coeurs", label: "Cœurs" },
 ];
 
 // ── Ambiances (thèmes de décor). `pattern` = motif du mur ──────────────────
+// Couleur des accessoires : « auto » = assortie au vêtement (par défaut, pour rester cohérent)
+export const HEAD_COLORS = [{ id: "auto", label: "Assortie au vêtement", color: "auto" }, ...CLOTH_COLORS];
+
 export const THEMES = [
   { id: "atelier", label: "Atelier", pattern: "dots",
     wall: "#EFE6D3", dot: "#CDB68C", plinth: "#E7DBC2", plinthLine: "#D9C9A7", haloShadow: "#D9C8A4", halo: "#F8F2E4", ray: "#FFFBEF", rayOpacity: 0.3, orbit: "#CDB98F",
@@ -308,7 +311,7 @@ export const DEFAULTS = {
   skin: "caramel", face: "ovale", build: "standard", eyes: "brun", expression: "sourire",
   freckles: false, faceArt: "aucun",
   hair: "carre", hairColor: "noir", facialHair: "aucune",
-  glasses: "rect", frame: "marron", headwear: "aucun", headColor: "sauge",
+  glasses: "rect", frame: "marron", headwear: "aucun", headColor: "auto",
   earphones: "filaires", earrings: "aucune", neck: "aucun",
   outfit: "hoodie", outfitColor: "marron",
   theme: "atelier", desk: "laptop", wall: "etageres", effect: "aucun",
@@ -318,12 +321,30 @@ export const DEFAULTS = {
 // Clés dont la valeur peut être une couleur libre (#RRGGBB)
 export const COLOR_KEYS = ["hairColor", "outfitColor", "eyes", "frame", "headColor"];
 
+// ── Cohérence : ce qui va (ou non) avec quoi ───────────────────────────────
+// Accessoires de cou possibles selon le vêtement
+export const NECK_FOR = {
+  hoodie: ["aucun", "echarpe", "badge"],
+  tee: ["aucun", "perles", "badge", "foulard", "echarpe"],
+  chemise: ["aucun", "cravate", "noeud", "badge", "foulard", "perles", "stethoscope", "echarpe"],
+  blazer: ["aucun", "cravate", "noeud", "badge", "foulard", "perles"],
+  pull: ["aucun", "echarpe", "perles", "badge"],
+  col: ["aucun", "echarpe", "badge"],
+  blouse: ["aucun", "stethoscope", "badge"],
+  tablier: ["aucun", "badge", "foulard"],
+  uniforme: ["aucun", "cravate", "noeud", "badge"],
+  salopette: ["aucun", "badge", "foulard"],
+};
+// Couleurs naturelles proposées automatiquement quand on choisit ces pièces
+export const HEADWEAR_COLOR = { toque: "blanc", chantier: "moutarde", mortier: "noir" };
+export const OUTFIT_COLOR = { blouse: "blanc", uniforme: "marine" };
+
 // Table de correspondance clé → liste d'options (sert à valider et au hasard)
 export const LISTS = {
   category: CATEGORIES,
   skin: SKINS, face: FACES, build: BUILDS, eyes: EYES, expression: EXPRESSIONS, faceArt: FACE_ARTS,
   hair: HAIRS, hairColor: HAIR_COLORS, facialHair: FACIAL_HAIRS,
-  glasses: GLASSES, frame: FRAME_COLORS, headwear: HEADWEARS, headColor: CLOTH_COLORS,
+  glasses: GLASSES, frame: FRAME_COLORS, headwear: HEADWEARS, headColor: HEAD_COLORS,
   earphones: EARPHONES, earrings: EARRINGS, neck: NECKS,
   outfit: OUTFITS, outfitColor: CLOTH_COLORS,
   theme: THEMES, desk: DESKS, wall: WALLS, effect: EFFECTS,

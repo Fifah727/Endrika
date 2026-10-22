@@ -1,11 +1,25 @@
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import Avatar from "../avatar/Avatar";
-import { CATEGORIES, COLOR_KEYS, CROPS, LISTS, byId, isHex } from "../avatar/catalog";
+import { CATEGORIES, COLOR_KEYS, CROPS, LISTS, NECK_FOR, byId, isHex } from "../avatar/catalog";
 
-// Aperçu figé d'une option, avec le reste de la configuration actuelle
+// Aperçu figé d'une option, avec le reste de la configuration actuelle.
+// Il n'est dessiné qu'à l'approche de l'écran : l'éditeur reste fluide, surtout sur mobile.
 const Thumb = memo(function Thumb({ config, crop, variant }) {
-  return <Avatar config={config} variant={variant} crop={CROPS[crop] ?? crop} />;
+  const ref = useRef(null);
+  const [near, setNear] = useState(typeof IntersectionObserver === "undefined");
+  useEffect(() => {
+    const el = ref.current;
+    if (near || !el) return undefined;
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && (setNear(true), io.disconnect()), { rootMargin: "300px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [near]);
+  return <span ref={ref} className="thumb">{near && <Avatar config={config} variant={variant} crop={CROPS[crop] ?? crop} />}</span>;
 });
+
+// Une option est grisée si elle ne va pas avec le reste (ex. cravate avec un sweat à capuche)
+const incompatible = (group, o, config) =>
+  group.key === "neck" && !(NECK_FOR[config.outfit] ?? ["aucun"]).includes(o.id);
 
 // Les options pensées pour l'univers choisi passent en premier ; tout reste accessible.
 const fits = (o, config) => Boolean(o.tags?.includes(config.category)) && config.category !== "libre";
@@ -22,8 +36,9 @@ function ThumbGroup({ group, config, onPick }) {
     <div className="grid grid--thumbs" role="radiogroup" aria-label={group.label}>
       {ordered(options, config).map(([o, i]) => {
         const selected = config[group.key] === o.id;
+        const blocked = incompatible(group, o, config);
         return (
-          <button key={o.id} type="button" role="radio" aria-checked={selected} className="tile" onClick={() => onPick(group.key, o.id)}>
+          <button key={o.id} type="button" role="radio" aria-checked={selected} aria-disabled={blocked || undefined} disabled={blocked} title={blocked ? "Ne va pas avec ce vêtement" : undefined} className="tile" onClick={() => onPick(group.key, o.id)}>
             <span className="tile__art"><Thumb config={previews[i]} crop={group.crop} variant={group.variant ?? "thumb"} /></span>
             <span className="tile__label">{o.label}</span>
           </button>
@@ -35,7 +50,7 @@ function ThumbGroup({ group, config, onPick }) {
 
 function SwatchGroup({ group, config, onPick }) {
   const options = LISTS[group.key];
-  const pick = (o) => (group.key === "skin" ? o.face : o.color);
+  const pick = (o) => (group.key === "skin" ? o.face : o.id === "auto" ? byId("outfitColor", config.outfitColor).color : o.color);
   const current = config[group.key];
   const customSelected = isHex(current);
   return (
@@ -48,7 +63,7 @@ function SwatchGroup({ group, config, onPick }) {
           aria-checked={current === o.id}
           aria-label={o.label}
           title={o.label}
-          className="swatch"
+          className={`swatch${o.id === "auto" ? " swatch--auto" : ""}`}
           style={{ "--swatch": pick(o) }}
           onClick={() => onPick(group.key, o.id)}
         />
@@ -91,7 +106,7 @@ function Chips({ group, config, onPick }) {
         const selected = config[group.key] === o.id;
         return (
           <button key={o.id} type="button" role="radio" aria-checked={selected} className="chip" onClick={() => onPick(group.key, o.id)}>
-            {o.emoji && <span className="chip__emoji" aria-hidden="true">{o.emoji}</span>}{o.label}
+            {o.label}
           </button>
         );
       })}
@@ -117,8 +132,7 @@ function CategoryGroup({ config, onApply }) {
   return (
     <div className="cats" role="radiogroup" aria-label="Univers">
       {CATEGORIES.map((c) => (
-        <button key={c.id} type="button" role="radio" aria-checked={config.category === c.id} className="cat" onClick={() => onApply({ ...c.patch, category: c.id })}>
-          <span className="cat__emoji" aria-hidden="true">{c.emoji}</span>
+        <button key={c.id} type="button" role="radio" aria-checked={config.category === c.id} className="cat" style={{ "--tint": c.tint }} onClick={() => onApply({ ...c.patch, category: c.id })}>
           <span className="cat__title">{c.label}</span>
           <span className="cat__blurb">{c.blurb}</span>
         </button>

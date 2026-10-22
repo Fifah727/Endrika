@@ -1,5 +1,6 @@
 import { memo, useEffect, useRef, useState } from "react";
 import Avatar from "../avatar/Avatar";
+import Heart from "./Heart";
 import { COLLECTIONS } from "../data/collections";
 import { RATIOS } from "../data/inspirations";
 
@@ -48,11 +49,11 @@ function InspirationCard({ item, favorite, onToggleFavorite, onOpen }) {
         <span className="icard__veil" aria-hidden="true">Voir</span>
       </button>
       <button type="button" className="icard__fav" aria-pressed={favorite} aria-label={favorite ? `Retirer « ${item.title} » des favoris` : `Ajouter « ${item.title} » aux favoris`} onClick={() => onToggleFavorite(item.id)}>
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.6 5 6 5c2 0 3.4 1.1 4 2.4h4C14.6 6.1 16 5 18 5c3.4 0 5.1 3.4 3.6 6.8C19.5 16.4 12 21 12 21z" /></svg>
+        <Heart filled={favorite} size={20} />
       </button>
       <div className="icard__meta">
         <h3>{item.title}</h3>
-        <p>{col?.emoji} {col?.label}</p>
+        <p>{col?.label}</p>
       </div>
     </article>
   );

@@ -62,9 +62,9 @@ export default function InspirationModal({ item, favorite, onToggleFavorite, onC
         <button ref={closeRef} type="button" className="modal__close" onClick={onClose} aria-label="Fermer">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg>
         </button>
-        <div className="modal__stage"><Avatar config={item.config} variant="full" label={`Aperçu animé : ${item.title}`} /></div>
+        <div className="modal__stage"><Avatar config={item.config} variant="full" forceMotion label={`Aperçu animé : ${item.title}`} /></div>
         <div className="modal__body">
-          <p className="modal__kicker">{col?.emoji} {col?.label}</p>
+          <p className="modal__kicker">{col?.label}</p>
           <h2 id="modal-title">{item.title}</h2>
           <p className="modal__note">{item.note}</p>
           <div className="swatchrow" aria-label="Palette de couleurs">
@@ -75,7 +75,7 @@ export default function InspirationModal({ item, favorite, onToggleFavorite, onC
           </ul>
           <div className="modal__actions">
             <button type="button" className="btn btn--primary" onClick={() => onCreate(item)}>Créer à partir de cette inspiration</button>
-            <button type="button" className="btn" aria-pressed={favorite} onClick={() => onToggleFavorite(item.id)}>{favorite ? "♥ Dans mes favoris" : "♡ Ajouter aux favoris"}</button>
+            <button type="button" className="btn" aria-pressed={favorite} onClick={() => onToggleFavorite(item.id)}>{favorite ? "Dans mes favoris" : "Ajouter aux favoris"}</button>
           </div>
         </div>
       </div>

@@ -24,7 +24,6 @@ import { Bubble, Desk, Idea } from "./parts/Scene";
  * États (attributs data-* lus par avatar.css) :
  *  data-state    "code" | "hello"   hello = survol, tap ou activité « coucou »
  *  data-activity "code" | "dance" | "chill" | "wave"
- *  data-wink     clic : clin d'œil
  *  data-motion   "full" force les animations malgré « réduire les animations »
  */
 
@@ -82,8 +81,8 @@ const Avatar = forwardRef(function Avatar(
   const lip = config.faceArt === "rouge" ? "#C2334D" : undefined;
   const fx = config.effect !== "aucun" ? config.effect : config.activity === "celebrate" ? "confettis" : null;
   const frameColor = byId("frame", config.frame).color;
-  const headColor = byId("headColor", config.headColor).color;
   const outfitColor = byId("outfitColor", config.outfitColor).color;
+  const headColor = config.headColor === "auto" ? outfitColor : byId("headColor", config.headColor).color;
   const build = byId("build", config.build).scale;
   const tempo = byId("tempo", config.tempo).value;
   const texts = GREETINGS;
@@ -92,14 +91,12 @@ const Avatar = forwardRef(function Avatar(
   // ── Interactions ──────────────────────────────────────────────────────────
   const svgRef = useRef(null);
   const [hello, setHello] = useState(false);
-  const [wink, setWink] = useState(false);
   const [msg, setMsg] = useState(texts[0] ?? "");
 
   const msgIndex = useRef(0);
   const touched = useRef(false);
   const helloRef = useRef(false);
   const tapTimer = useRef(0);
-  const winkTimer = useRef(0);
   const pointer = useRef({ x: 0, y: 0 });
   const raf = useRef(0);
 
@@ -170,7 +167,6 @@ const Avatar = forwardRef(function Avatar(
   useEffect(
     () => () => {
       clearTimeout(tapTimer.current);
-      clearTimeout(winkTimer.current);
       cancelAnimationFrame(raf.current);
     },
     []
@@ -210,16 +206,10 @@ const Avatar = forwardRef(function Avatar(
       el.style.setProperty("--ny", ny.toFixed(3));
     });
   };
-  const onClick = () => {
-    setWink(true);
-    clearTimeout(winkTimer.current);
-    winkTimer.current = setTimeout(() => setWink(false), 700);
-  };
-
   // ── Rendu ─────────────────────────────────────────────────────────────────
   const hasHat = config.headwear === "casquette" || config.headwear === "bonnet";
   const handlers = interactive
-    ? { onPointerEnter: onEnter, onPointerLeave: onLeave, onPointerDown: onDown, onPointerMove: onMove, onClick }
+    ? { onPointerEnter: onEnter, onPointerLeave: onLeave, onPointerDown: onDown, onPointerMove: onMove }
     : {};
   const showBubble = live && texts.length > 0;
 
@@ -229,7 +219,6 @@ const Avatar = forwardRef(function Avatar(
       className="avatar"
       data-state={isHello ? "hello" : "code"}
       data-activity={config.activity}
-      data-wink={wink ? "true" : "false"}
       data-motion={forceMotion || variant === "export" ? "full" : undefined}
       data-static={live ? undefined : "true"}
       style={{ "--tempo": tempo, ...(crop ? { aspectRatio: aspectOf(crop) } : null) }}
@@ -304,7 +293,6 @@ const Avatar = forwardRef(function Avatar(
       </g>
 
       {showScene && <DeskItem kind={config.desk} theme={theme} />}
-      {live && <path className="av-pop" d="M296 160 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z" fill={theme.a} />}
       {showBubble && <Bubble text={msg} />}
     </svg>
   );
