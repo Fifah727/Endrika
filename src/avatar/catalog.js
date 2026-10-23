@@ -286,10 +286,15 @@ export const THEMES = [
 // ── Animation ──────────────────────────────────────────────────────────────
 export const ACTIVITIES = [
   { id: "code", label: "Au travail, en musique", hint: "Tête qui rebondit en rythme, notes de musique, idée de temps en temps" },
-  { id: "chill", label: "Se détendre", hint: "Respiration lente, vapeur du café" },
+  { id: "think", label: "Réfléchir", hint: "Tête penchée, regard en l'air, l'ampoule s'allume souvent" },
+  { id: "nod", label: "Dire oui", hint: "Hoche la tête deux fois, puis fait une pause" },
+  { id: "shake", label: "Dire non", hint: "Secoue la tête de gauche à droite" },
+  { id: "laugh", label: "Rire", hint: "Yeux plissés, grand sourire, épaules qui sautent" },
+  { id: "celebrate", label: "Fêter ça", hint: "Saute de joie sous une pluie de confettis" },
   { id: "dance", label: "Danser", hint: "Tout le buste se balance en rythme" },
-  { id: "wave", label: "Faire coucou", hint: "Le bras reste levé, la bulle reste affichée" },
-  { id: "celebrate", label: "Fêter ça", hint: "Coucou, rebonds et confettis" },
+  { id: "chill", label: "Se détendre", hint: "Respiration lente, yeux qui se ferment doucement" },
+  { id: "sleep", label: "Dormir", hint: "Yeux fermés, tête qui tombe, petits « z » qui s'envolent" },
+  { id: "wave", label: "Faire coucou", hint: "Le bras levé salue, avec une bulle de message" },
 ];
 
 export const TEMPOS = [
@@ -297,9 +302,6 @@ export const TEMPOS = [
   { id: "normal", label: "Normal", value: 1 },
   { id: "rapide", label: "Rapide", value: 0.65 },
 ];
-
-// Messages de la bulle quand l'avatar te salue
-export const GREETINGS = ["Coucou !", "Bonjour et bienvenue !", "Salama !", "Une idée en tête ?"];
 
 // Éléments qui suivent l'univers choisi (plus de réglages séparés)
 export const CARD_BY_CATEGORY = { dev: "code", etudiant: "notes", metier: "chart", creatif: "palette", libre: "rien" };

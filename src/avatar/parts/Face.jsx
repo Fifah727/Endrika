@@ -90,8 +90,8 @@ const mouths = (c) => ({
     s: <path d="M182 217 Q200 237 218 217" fill="none" stroke={c} strokeWidth="4.6" strokeLinecap="round" />,
   },
   grand: {
-    n: <><path d="M182 216 Q200 246 218 216 Z" fill={INSIDE} stroke={c} strokeWidth="3.4" strokeLinejoin="round" /><path d="M191 232 Q200 226 209 232 Q200 241 191 232 Z" fill={TONGUE} /></>,
-    s: <><path d="M179 215 Q200 250 221 215 Z" fill={INSIDE} stroke={c} strokeWidth="3.6" strokeLinejoin="round" /><path d="M190 234 Q200 227 210 234 Q200 244 190 234 Z" fill={TONGUE} /></>,
+    n: <><path d="M182 216 Q200 246 218 216 Z" fill={INSIDE} stroke={c} strokeWidth="3.4" strokeLinejoin="round" /><ellipse cx="200" cy="227.6" rx="7" ry="3" fill={TONGUE} /></>,
+    s: <><path d="M179 215 Q200 250 221 215 Z" fill={INSIDE} stroke={c} strokeWidth="3.6" strokeLinejoin="round" /><ellipse cx="200" cy="228.6" rx="8" ry="3.2" fill={TONGUE} /></>,
   },
   neutre: {
     n: <path d="M188 224 H212" fill="none" stroke={c} strokeWidth="4.2" strokeLinecap="round" />,
@@ -106,8 +106,8 @@ const mouths = (c) => ({
     s: <ellipse cx="200" cy="227" rx="7" ry="9.5" fill={INSIDE} stroke={c} strokeWidth="3" />,
   },
   rieur: {
-    n: <><path d="M180 214 H220 Q220 242 200 242 Q180 242 180 214 Z" fill={INSIDE} stroke={c} strokeWidth="3.4" strokeLinejoin="round" /><path d="M189 237 Q200 228 211 237 Q200 244 189 237 Z" fill={TONGUE} /></>,
-    s: <><path d="M178 213 H222 Q222 246 200 246 Q178 246 178 213 Z" fill={INSIDE} stroke={c} strokeWidth="3.6" strokeLinejoin="round" /><path d="M188 240 Q200 229 212 240 Q200 248 188 240 Z" fill={TONGUE} /></>,
+    n: <><path d="M180 214 H220 Q220 242 200 242 Q180 242 180 214 Z" fill={INSIDE} stroke={c} strokeWidth="3.4" strokeLinejoin="round" /><ellipse cx="200" cy="235.4" rx="8" ry="3.4" fill={TONGUE} /></>,
+    s: <><path d="M178 213 H222 Q222 246 200 246 Q178 246 178 213 Z" fill={INSIDE} stroke={c} strokeWidth="3.6" strokeLinejoin="round" /><ellipse cx="200" cy="237.6" rx="9" ry="3.6" fill={TONGUE} /></>,
   },
   etoiles: {
     n: <path d="M186 217 Q200 238 214 217 Z" fill={INSIDE} stroke={c} strokeWidth="3.2" strokeLinejoin="round" />,
@@ -122,6 +122,11 @@ export function Mouth({ skin, expression = "sourire", lip }) {
     <>
       <g className="av-mouth-n">{m.n}</g>
       <g className="av-mouth-s">{m.s}</g>
+      {/* grande bouche ouverte : affichée seulement pendant « Rire » et « Fêter ça » */}
+      <g className="av-mouth-big">
+        <path d="M178 213 H222 Q222 246 200 246 Q178 246 178 213 Z" fill={INSIDE} stroke={c} strokeWidth="3.6" strokeLinejoin="round" />
+        <ellipse cx="200" cy="238" rx="9" ry="3.6" fill={TONGUE} />
+      </g>
     </>
   );
 }

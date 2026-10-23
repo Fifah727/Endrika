@@ -1,11 +1,10 @@
 /* ══════════════════════════════════════════════════════════════════════════
-   AVATAR : états pilotés par data-* sur le <svg>
-     data-state="code"      au travail, souriante, en musique (défaut)
-     data-state="hello"     survol / tap / activité « coucou » : te regarde et salue
-     data-activity="…"      code | dance | chill | wave  (choix de l'utilisateur)
-     data-motion="full"     force les animations complètes (prop forceMotion)
-     data-static="true"     aperçus de l'éditeur : aucune animation
-   Variables posées en JS : --nx / --ny (curseur, de -1 à 1), --tempo (vitesse)
+   AVATAR : animations pilotées par data-* sur le <svg> (aucune interaction)
+     data-activity="…"   code | think | nod | shake | laugh | celebrate | dance | chill | sleep | wave
+     data-state="hello"  uniquement pour « coucou » : bras levé et bulle
+     data-motion="full"  force les animations complètes (prop forceMotion)
+     data-static="true"  aperçus de l'éditeur : aucune animation
+   Variable posée en JS : --tempo (vitesse)
    ══════════════════════════════════════════════════════════════════════════ */
 
 .avatar {
@@ -69,6 +68,7 @@
 /* sourire doux (la bouche ne bouge jamais) */
 .av-mouth-n { opacity: 1; transition: opacity 0.2s; }
 .av-mouth-s { opacity: 0; transition: opacity 0.2s; }
+.av-mouth-big { opacity: 0; }
 /* notes de musique */
 .av-music { opacity: 1; transition: opacity 0.3s; }
 .av-mnote { animation: av-mnote 3s ease-in-out infinite; }
@@ -97,13 +97,13 @@
 .av-aha { animation: av-aha 10s ease-in-out 1.5s infinite; }
 
 /* ══════════════════════════ ÉTAT « HELLO » ════════════════════════════════ */
-/* la tête se redresse et se tourne un peu vers le curseur ; les yeux le suivent */
+/* la tête se redresse pour dire bonjour */
 .avatar[data-state="hello"] .av-pose {
-  transform: rotate(calc(2deg + var(--nx, 0) * 2.5deg)) translate(0, -3px);
+  transform: rotate(2deg) translate(0, -3px);
   transition: transform 0.35s var(--av-smooth);
 }
 .avatar[data-state="hello"] .av-look {
-  transform: translate(calc(var(--nx, 0) * 3px), calc(var(--ny, 0) * 2px));
+  transform: translate(0, 0);
   transition: transform 0.18s ease-out;
 }
 .avatar[data-state="hello"] .av-brows { transform: translateY(-3px); }
@@ -285,16 +285,97 @@
 }
 
 /* ══════════════════════════ ACTIVITÉS SUPPLÉMENTAIRES ═════════════════════ */
-/* Fêter ça : coucou permanent + rebonds (le buste et la tête sautent ensemble) */
+/* Activités : chacune a un mouvement bien distinct. La tête et le buste partagent exactement
+   les mêmes images clés quand ils bougent ensemble, pour rester collés l'un à l'autre. */
+.avatar:is([data-activity="think"], [data-activity="nod"], [data-activity="shake"], [data-activity="laugh"], [data-activity="celebrate"], [data-activity="sleep"]) .av-music { opacity: 0; }
+
+/* Réfléchir : tête penchée, regard en l'air, ampoule fréquente */
+.avatar[data-activity="think"][data-state="code"] .av-pose { transform: rotate(4deg) translate(3px, -1px); }
+.avatar[data-activity="think"][data-state="code"] .av-look { transform: translate(3.5px, -3px); }
+.avatar[data-activity="think"][data-state="code"] .av-brows { transform: translateY(-5px); }
+.avatar[data-activity="think"] .av-idea,
+.avatar[data-activity="think"] .av-aha { animation-duration: calc(4s * var(--tempo, 1)); }
+.avatar[data-activity="think"][data-state="code"] .av-head,
+.avatar[data-activity="think"][data-state="code"] .av-hairback { animation: av-think calc(5s * var(--tempo, 1)) ease-in-out infinite; }
+
+/* Dire oui : deux hochements, puis une pause */
+.avatar[data-activity="nod"][data-state="code"] .av-head,
+.avatar[data-activity="nod"][data-state="code"] .av-hairback { animation: av-nod calc(2.4s * var(--tempo, 1)) ease-in-out infinite; }
+
+/* Dire non : la tête secoue de gauche à droite */
+.avatar[data-activity="shake"][data-state="code"] .av-head,
+.avatar[data-activity="shake"][data-state="code"] .av-hairback { animation: av-shake calc(2.4s * var(--tempo, 1)) ease-in-out infinite; }
+
+/* Rire : yeux plissés, grand sourire, tête et épaules qui sautillent */
+.avatar[data-activity="laugh"] .av-mouth-n,
+.avatar[data-activity="laugh"] .av-mouth-s { opacity: 0; }
+.avatar[data-activity="laugh"] .av-mouth-big { opacity: 1; }
+.avatar[data-activity="laugh"] .av-cheek { opacity: 0.5; }
+.avatar[data-activity="laugh"] .av-eye-l,
+.avatar[data-activity="laugh"] .av-eye-r { animation: none; transform: scaleY(0.28); }
+.avatar[data-activity="laugh"][data-state="code"] .av-head,
+.avatar[data-activity="laugh"][data-state="code"] .av-hairback { animation: av-laugh calc(0.42s * var(--tempo, 1)) ease-in-out infinite; }
+.avatar[data-activity="laugh"] .av-breathe { animation: av-laugh-body calc(0.42s * var(--tempo, 1)) ease-in-out infinite; }
+
+/* Fêter ça : saute de joie (aucun coucou) ; les confettis arrivent avec l'activité */
+.avatar[data-activity="celebrate"] .av-mouth-n,
+.avatar[data-activity="celebrate"] .av-mouth-s { opacity: 0; }
+.avatar[data-activity="celebrate"] .av-mouth-big { opacity: 1; }
+.avatar[data-activity="celebrate"] .av-brows { transform: translateY(-4px); }
+.avatar[data-activity="celebrate"] .av-cheek { opacity: 0.5; }
 .avatar[data-activity="celebrate"] .av-breathe,
 .avatar[data-activity="celebrate"] .av-head,
-.avatar[data-activity="celebrate"] .av-hairback {
-  animation: av-bounce calc(0.6s * var(--tempo, 1)) ease-in-out infinite;
-}
+.avatar[data-activity="celebrate"] .av-hairback { animation: av-jump calc(0.9s * var(--tempo, 1)) ease-in-out infinite; }
 
-@keyframes av-bounce {
+/* Dormir : yeux fermés, tête qui tombe puis se redresse, petits « z » */
+.avatar[data-activity="sleep"] .av-eye-l,
+.avatar[data-activity="sleep"] .av-eye-r { animation: none; transform: scaleY(0.08); }
+.avatar[data-activity="sleep"] .av-brows { transform: translateY(1px); }
+.avatar[data-activity="sleep"] .av-typing { animation: none; }
+.avatar[data-activity="sleep"] .av-breathe { animation-duration: calc(7s * var(--tempo, 1)); }
+.avatar[data-activity="sleep"][data-state="code"] .av-head,
+.avatar[data-activity="sleep"][data-state="code"] .av-hairback { animation: av-sleep calc(6s * var(--tempo, 1)) ease-in-out infinite; }
+.av-zzz { opacity: 0; }
+.avatar[data-activity="sleep"] .av-zzz { opacity: 1; }
+.avatar[data-activity="sleep"] .av-z { animation: av-z calc(3s * var(--tempo, 1)) ease-out infinite; }
+
+@keyframes av-think {
+  0%, 100% { transform: rotate(-1deg) translateY(0); }
+  50%      { transform: rotate(2.5deg) translateY(-3px); }
+}
+@keyframes av-nod {
+  0%, 48%, 100% { transform: translateY(0) rotate(0deg); }
+  12%, 36%      { transform: translateY(12px) rotate(1.5deg); }
+  24%           { transform: translateY(0) rotate(0deg); }
+}
+@keyframes av-shake {
+  0%, 56%, 100% { transform: rotate(0deg); }
+  8%, 32%       { transform: rotate(-7deg); }
+  20%, 44%      { transform: rotate(7deg); }
+}
+@keyframes av-laugh {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-5px) rotate(2deg); }
+}
+@keyframes av-laugh-body {
   0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-11px); }
+  50%      { transform: translateY(-3px); }
+}
+@keyframes av-jump {
+  0%, 100% { transform: translateY(0); }
+  40%, 60% { transform: translateY(-16px); }
+  80%      { transform: translateY(0); }
+}
+@keyframes av-sleep {
+  0%, 100% { transform: rotate(-1deg) translateY(0); }
+  55%      { transform: rotate(8deg) translateY(10px); }
+  68%      { transform: rotate(-2deg) translateY(1px); }
+  82%      { transform: rotate(7deg) translateY(9px); }
+}
+@keyframes av-z {
+  0%   { opacity: 0; transform: translate(0, 8px) scale(0.7); }
+  25%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(10px, -22px) scale(1.1); }
 }
 
 /* ── Effets décoratifs (particules) ─────────────────────────────────────── */
@@ -365,9 +446,7 @@
   .avatar:not([data-motion="full"])[data-activity="dance"][data-state="hello"] .av-breathe,
   .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-head,
   .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-hairback,
-  .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-breathe,
-  .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-head,
-  .avatar:not([data-motion="full"])[data-activity="celebrate"] .av-hairback,
+  .avatar:not([data-motion="full"]):is([data-activity="think"], [data-activity="nod"], [data-activity="shake"], [data-activity="laugh"], [data-activity="celebrate"], [data-activity="sleep"]) :is(.av-head, .av-hairback, .av-breathe, .av-z),
   .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-eye-l,
   .avatar:not([data-motion="full"])[data-activity="chill"][data-state="code"] .av-eye-r,
   .avatar:not([data-motion="full"]) .av-fx,

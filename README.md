@@ -11,7 +11,7 @@ Plateforme pour créer un **avatar animé personnalisé**, quel que soit ton mé
 **Éditeur en 6 étapes** : Univers · Personnage · Look · Décor · Animation · Exporter.
 
 - **5 univers** : Développeur, Étudiant, Autres métiers, Créatif, Personnalisation libre. Chaque univers met en avant ses objets (ordinateur, cahier, tablette graphique, stéthoscope…) en premier, mais tout reste accessible : on peut mélanger les catégories.
-- 15 coiffures, 5 formes de visage, 7 expressions, 10 tenues, 12 couvre-chefs, 8 accessoires de cou, 11 objets de bureau, 14 ambiances, effets de particules, 5 activités animées (travail en musique, détente, danse, coucou, fête), couleurs libres pour les cheveux et les vêtements.
+- 15 coiffures, 5 formes de visage, 7 expressions, 10 tenues, 12 couvre-chefs, 8 accessoires de cou, 11 objets de bureau, 14 ambiances, effets de particules, 10 activités animées (travail en musique, réfléchir, dire oui, dire non, rire, fêter ça, danser, se détendre, dormir, coucou), couleurs libres pour les cheveux et les vêtements.
 - **Annuler / rétablir** (Ctrl+Z, Ctrl+Maj+Z), réinitialiser, aléatoire, **lien partageable**, **enregistrement** des créations (« Mes créations », sur l'appareil).
 
 **Exports réels** (générés dans le navigateur) :
@@ -72,7 +72,7 @@ Les accessoires de cou ne se proposent qu'avec les vêtements qui vont avec (cra
 
 ## Ce qui a été volontairement retiré (à rajouter plus tard si besoin)
 
-Pour garder le site léger et fiable : styles artistiques par filtres (Sticker, Encre, Pastel, Rétro, Rêverie), générateur de « remix », looks prêts à l'emploi, palettes, couleur de mur libre, proportions « chibi », réglages de la bulle et du survol, tasse/orbite en option, filtres par couleur et par style dans la galerie, duplication des créations, options d'export avancées (fluidité, répétitions, qualité), clin d'œil au clic (il ne fermait qu'un œil), 26 inspirations et 3 collections.
+Pour garder le site léger et fiable : styles artistiques par filtres (Sticker, Encre, Pastel, Rétro, Rêverie), générateur de « remix », looks prêts à l'emploi, palettes, couleur de mur libre, proportions « chibi », réglages de la bulle, survol, clic et salut d'accueil, tasse/orbite en option, filtres par couleur et par style dans la galerie, duplication des créations, options d'export avancées (fluidité, répétitions, qualité), clin d'œil au clic (il ne fermait qu'un œil), 26 inspirations et 3 collections.
 
 ## Comment fonctionnent les exports
 

@@ -1,6 +1,6 @@
-import { forwardRef, memo, useCallback, useEffect, useId, useRef, useState } from "react";
+import { forwardRef, memo, useCallback, useEffect, useId, useRef } from "react";
 import "../styles/avatar.css";
-import { CARD_BY_CATEGORY, FLOATERS_BY_CATEGORY, GREETINGS, byId } from "./catalog";
+import { CARD_BY_CATEGORY, FLOATERS_BY_CATEGORY, byId } from "./catalog";
 import { hairTones } from "./color";
 import { Audio, Earrings, Headwear, Neck } from "./parts/Accessories";
 import { Background, CardItem, Effects, Floaters, Orbit, WallItem, WallPattern } from "./parts/Decor";
@@ -9,25 +9,25 @@ import { Brows, Ears, Eyes, FaceArt, FaceBase, FacialHair, Mouth } from "./parts
 import { Glasses, LensClip } from "./parts/Glasses";
 import { HairBack, HairFront } from "./parts/Hair";
 import { Sleeve, Torso } from "./parts/Outfit";
-import { Bubble, Desk, Idea } from "./parts/Scene";
+import { Bubble, Desk, Idea, Mug, Zzz } from "./parts/Scene";
 
 /**
- * Avatar animé, entièrement piloté par `config` (voir catalog.js).
+ * Avatar animé, entièrement piloté par `config` (voir catalog.js). Aucune interaction :
+ * ce que tu vois est ce que tu exportes.
  *
- *  variant="full"   : scène complète, animée et interactive (survol, tap, clic)
- *  variant="export"  : scène complète animée, sans interaction, animations forcées (captures et exports)
- *  variant="preview" : scène animée, sans interaction, respecte « réduire les animations » (survol des cartes)
+ *  variant="full"   : scène complète animée (éditeur, fenêtre d'inspiration)
+ *  variant="export" : scène complète animée, animations forcées (captures des exports)
  *  variant="scene"  : scène complète figée, recadrable (cartes de galerie)
  *  variant="thumb"  : personnage seul, figé, recadré sur `crop` (aperçus de l'éditeur)
  *  layers           : { background, plank } à false pour un export à fond transparent
+ *  forceMotion      : joue les animations même si le système demande de les réduire
  *
- * États (attributs data-* lus par avatar.css) :
- *  data-state    "code" | "hello"   hello = survol, tap ou activité « coucou »
- *  data-activity "code" | "dance" | "chill" | "wave"
- *  data-motion   "full" force les animations malgré « réduire les animations »
+ * Attributs data-* lus par avatar.css :
+ *  data-activity  code | think | nod | shake | laugh | celebrate | dance | chill | sleep | wave
+ *  data-state     "hello" uniquement pour l'activité « coucou » (bras levé et bulle), sinon "code"
+ *  data-motion    "full" force les animations malgré « réduire les animations »
  */
 
-const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 const aspectOf = (crop) => {
   const [, , w, h] = crop.split(/\s+/).map(Number);
   return w && h ? w / h : 1;
@@ -59,47 +59,36 @@ function Arm({ outfit, color, skin, theme }) {
 }
 
 const Avatar = forwardRef(function Avatar(
-  { config, variant = "full", crop, forceMotion = false, onStateChange, layers, label = "Avatar animé" },
+  { config, variant = "full", crop, forceMotion = false, layers, label = "Avatar animé" },
   ref
 ) {
-  const live = variant === "full" || variant === "export" || variant === "preview";
-  const interactive = variant === "full";
+  const live = variant === "full" || variant === "export";
   const showScene = variant !== "thumb";
   const showBackground = layers?.background !== false;
   const showPlank = layers?.plank !== false;
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const gridId = `av-grid-${uid}`;
-  const cutId = `av-cut-${uid}`;
   const lensId = `av-lens-${uid}`;
   const cableId = `av-cable-${uid}`;
+  const cutId = `av-cut-${uid}`;
 
   // ── Valeurs dérivées de la configuration ──────────────────────────────────
   const skin = byId("skin", config.skin);
   const tone = hairTones(byId("hairColor", config.hairColor).color);
   const eyeColor = byId("eyes", config.eyes).color;
   const theme = byId("theme", config.theme);
-  const lip = config.faceArt === "rouge" ? "#C2334D" : undefined;
-  const fx = config.effect !== "aucun" ? config.effect : config.activity === "celebrate" ? "confettis" : null;
   const frameColor = byId("frame", config.frame).color;
   const outfitColor = byId("outfitColor", config.outfitColor).color;
   const headColor = config.headColor === "auto" ? outfitColor : byId("headColor", config.headColor).color;
   const build = byId("build", config.build).scale;
   const tempo = byId("tempo", config.tempo).value;
-  const texts = GREETINGS;
-  const textsKey = texts.join("|");
+  const lip = config.faceArt === "rouge" ? "#C2334D" : undefined;
+  const fx = config.effect !== "aucun" ? config.effect : config.activity === "celebrate" ? "confettis" : null;
+  const hello = config.activity === "wave";
+  const hasHat = config.headwear === "casquette" || config.headwear === "bonnet";
 
-  // ── Interactions ──────────────────────────────────────────────────────────
+  // Hors écran : animations en pause (voir avatar.css)
   const svgRef = useRef(null);
-  const [hello, setHello] = useState(false);
-  const [msg, setMsg] = useState(texts[0] ?? "");
-
-  const msgIndex = useRef(0);
-  const touched = useRef(false);
-  const helloRef = useRef(false);
-  const tapTimer = useRef(0);
-  const pointer = useRef({ x: 0, y: 0 });
-  const raf = useRef(0);
-
   const setRefs = useCallback(
     (el) => {
       svgRef.current = el;
@@ -108,116 +97,21 @@ const Avatar = forwardRef(function Avatar(
     },
     [ref]
   );
-
-  // Quand on change de message, on repart du premier
-  useEffect(() => {
-    msgIndex.current = 0;
-    setMsg(texts[0] ?? "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [textsKey]);
-
-  const show = () => {
-    if (!helloRef.current && texts.length) {
-      setMsg(texts[msgIndex.current % texts.length]);
-      msgIndex.current += 1;
-    }
-    helloRef.current = true;
-    setHello(true);
-  };
-  const hide = () => {
-    helloRef.current = false;
-    setHello(false);
-    const el = svgRef.current;
-    if (el) {
-      el.style.setProperty("--nx", "0");
-      el.style.setProperty("--ny", "0");
-    }
-  };
-
-  // Hors écran : animations en pause (voir avatar.css)
   useEffect(() => {
     const el = svgRef.current;
-    if (!interactive || !el || typeof IntersectionObserver === "undefined") return undefined;
+    if (variant !== "full" || !el || typeof IntersectionObserver === "undefined") return undefined;
     const io = new IntersectionObserver(([entry]) => {
       el.dataset.offscreen = entry.isIntersecting ? "false" : "true";
     });
     io.observe(el);
     return () => io.disconnect();
-  }, [interactive]);
-
-  const wave = config.activity === "wave" || config.activity === "celebrate";
-  const isHello = wave || hello;
-  useEffect(() => {
-    if (interactive && onStateChange) onStateChange(isHello ? "hello" : "code");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHello]);
-
-  // Salut d'accueil, une seule fois (annulé si on touche l'avatar avant)
-  useEffect(() => {
-    if (!interactive) return undefined;
-    const a = setTimeout(() => !touched.current && show(), 900);
-    const b = setTimeout(() => !touched.current && hide(), 4300);
-    return () => {
-      clearTimeout(a);
-      clearTimeout(b);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [interactive]);
-
-  useEffect(
-    () => () => {
-      clearTimeout(tapTimer.current);
-      cancelAnimationFrame(raf.current);
-    },
-    []
-  );
-
-  const onEnter = (e) => {
-    if (e.pointerType === "touch") return;
-    touched.current = true;
-    show();
-  };
-  const onLeave = (e) => {
-    if (e.pointerType === "touch") return;
-    hide();
-  };
-  const onDown = (e) => {
-    touched.current = true;
-    if (e.pointerType === "touch") {
-      show();
-      clearTimeout(tapTimer.current);
-      tapTimer.current = setTimeout(hide, 3500);
-    }
-  };
-  // Les yeux et la tête suivent le curseur
-  const onMove = (e) => {
-    if (e.pointerType === "touch") return;
-    pointer.current.x = e.clientX;
-    pointer.current.y = e.clientY;
-    if (raf.current) return;
-    raf.current = requestAnimationFrame(() => {
-      raf.current = 0;
-      const el = svgRef.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const nx = clamp((pointer.current.x - (r.left + r.width / 2)) / (r.width / 2), -1, 1);
-      const ny = clamp((pointer.current.y - (r.top + r.height * 0.45)) / (r.height / 2), -1, 1);
-      el.style.setProperty("--nx", nx.toFixed(3));
-      el.style.setProperty("--ny", ny.toFixed(3));
-    });
-  };
-  // ── Rendu ─────────────────────────────────────────────────────────────────
-  const hasHat = config.headwear === "casquette" || config.headwear === "bonnet";
-  const handlers = interactive
-    ? { onPointerEnter: onEnter, onPointerLeave: onLeave, onPointerDown: onDown, onPointerMove: onMove }
-    : {};
-  const showBubble = live && texts.length > 0;
+  }, [variant]);
 
   return (
     <svg
       ref={setRefs}
       className="avatar"
-      data-state={isHello ? "hello" : "code"}
+      data-state={hello ? "hello" : "code"}
       data-activity={config.activity}
       data-motion={forceMotion || variant === "export" ? "full" : undefined}
       data-static={live ? undefined : "true"}
@@ -225,10 +119,9 @@ const Avatar = forwardRef(function Avatar(
       viewBox={crop ?? "0 0 400 400"}
       width="400"
       height="400"
-      role={interactive ? "img" : undefined}
-      aria-label={interactive ? label : undefined}
-      aria-hidden={interactive ? undefined : "true"}
-      {...handlers}
+      role={variant === "full" ? "img" : undefined}
+      aria-label={variant === "full" ? label : undefined}
+      aria-hidden={variant === "full" ? undefined : "true"}
     >
       <defs>
         <WallPattern id={gridId} theme={theme} />
@@ -251,7 +144,7 @@ const Avatar = forwardRef(function Avatar(
           {/* l'idée et les effets passent DERRIÈRE le personnage : ils ne cachent ni le visage ni les chapeaux */}
           {live && <Idea />}
           {fx && <Effects kind={fx} />}
-          {showPlank && <Desk theme={theme} mug />}
+          {showPlank && <Desk theme={theme} />}
         </>
       )}
 
@@ -269,7 +162,7 @@ const Avatar = forwardRef(function Avatar(
           </g>
         </g>
 
-        {live && <Arm outfit={config.outfit} color={outfitColor} skin={skin} theme={theme} />}
+        {live && hello && <Arm outfit={config.outfit} color={outfitColor} skin={skin} theme={theme} />}
       </g>
 
       {/* tête */}
@@ -292,8 +185,11 @@ const Avatar = forwardRef(function Avatar(
         </g>
       </g>
 
+      {/* tasse et objet du bureau : au premier plan, devant l'épaule */}
+      {showScene && showPlank && <Mug theme={theme} />}
       {showScene && <DeskItem kind={config.desk} theme={theme} />}
-      {showBubble && <Bubble text={msg} />}
+      {showScene && config.activity === "sleep" && <Zzz />}
+      {live && hello && <Bubble text="Coucou !" />}
     </svg>
   );
 });

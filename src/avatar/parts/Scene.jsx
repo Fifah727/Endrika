@@ -2,7 +2,7 @@ export const MONO =
   "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)";
 
 // ── Bureau (et tasse) ─────────────────────────────────────────────────────────
-export function Desk({ theme: th, mug }) {
+export function Desk({ theme: th }) {
   return (
     <>
       <rect x="0" y="366" width="400" height="34" fill={th.deskTop} />
@@ -10,8 +10,14 @@ export function Desk({ theme: th, mug }) {
       <rect x="0" y="369" width="400" height="1.5" fill={th.deskGrain} opacity=".35" />
       <polygon points="128,370 176,370 144,400 92,400" fill="#FFFBEF" opacity=".14" />
       <path d="M18 380 H92 M306 378 H384 M150 394 H250" fill="none" stroke={th.deskGrain} strokeOpacity=".55" strokeWidth="1.5" strokeLinecap="round" />
-      {mug && (
-        <g>
+    </>
+  );
+}
+
+// ── Tasse de café : posée sur le bureau, DEVANT le personnage (elle ne passe jamais derrière l'épaule) ──
+export function Mug({ theme: th }) {
+  return (
+    <g>
           <ellipse cx="45" cy="383" rx="24" ry="3.5" fill={th.contact} opacity=".18" />
           <path className="av-steam" d="M40 338 C34 328 46 322 40 312 C36 305 42 300 40 294" fill="none" stroke={th.orbit} strokeWidth="3" strokeLinecap="round" />
           <path className="av-steam av-steam--b" d="M52 338 C46 327 58 320 52 309 C48 302 54 297 52 290" fill="none" stroke={th.orbit} strokeWidth="3" strokeLinecap="round" />
@@ -20,9 +26,7 @@ export function Desk({ theme: th, mug }) {
           <rect x="28" y="358" width="34" height="7" fill={th.a} />
           <ellipse cx="45" cy="344.5" rx="17" ry="4.5" fill="#E6DFD0" />
           <ellipse cx="45" cy="345" rx="13.5" ry="3" fill="#6B4430" />
-        </g>
-      )}
-    </>
+    </g>
   );
 }
 
@@ -74,6 +78,18 @@ export function Bubble({ text }) {
       <text x={150} y="39" textAnchor="middle" fontSize="13" fontWeight="700" fill="#CFE8D8" style={{ fontFamily: MONO }}>
         {text}
       </text>
+    </g>
+  );
+}
+
+// ── « Z z z » de l'activité « Dormir » (invisible pour les autres activités : voir avatar.css) ──
+export function Zzz() {
+  const zs = [[258, 118, 21], [278, 92, 29], [300, 62, 37]];
+  return (
+    <g className="av-zzz" pointerEvents="none">
+      {zs.map(([x, y, size], i) => (
+        <text key={i} className="av-z" style={{ animationDelay: `${-i * 1}s`, fontFamily: MONO }} x={x} y={y} fontSize={size} fontWeight="700" fill="#6C6890">z</text>
+      ))}
     </g>
   );
 }

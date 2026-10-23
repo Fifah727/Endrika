@@ -92,7 +92,6 @@ export default function Editor({ seed, onSave, toast, onOpenSaved, onDraft }) {
           <button type="button" className="btn btn--primary" onClick={onSaveClick}>{creationId ? "Mettre à jour" : "Enregistrer"}</button>
           </div>
         </div>
-        <p className="stage__tip">Survole l'avatar : il te regarde et te salue.</p>
       </section>
 
       <section className="panel" aria-label="Personnalisation">
