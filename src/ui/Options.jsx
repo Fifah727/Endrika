@@ -17,6 +17,22 @@ const Thumb = memo(function Thumb({ config, crop, variant }) {
   return <span ref={ref} className="thumb">{near && <Avatar config={config} variant={variant} crop={CROPS[crop] ?? crop} />}</span>;
 });
 
+// Groupe de boutons radio au clavier : flèches = option précédente / suivante,
+// et un seul arrêt de tabulation par groupe (au lieu d'un par option).
+function radioKeys(e) {
+  const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+  const step = keys[e.key];
+  if (!step) return;
+  const radios = [...e.currentTarget.querySelectorAll('[role="radio"]:not(:disabled)')];
+  const at = radios.indexOf(document.activeElement);
+  if (at < 0 || !radios.length) return;
+  e.preventDefault();
+  const next = radios[(at + step + radios.length) % radios.length];
+  next.focus();
+  next.click();
+}
+const stop = (selected, anySelected, first) => (selected || (!anySelected && first) ? 0 : -1);
+
 // Une option est grisée si elle ne va pas avec le reste (ex. cravate avec un sweat à capuche)
 const incompatible = (group, o, config) =>
   group.key === "neck" && !(NECK_FOR[config.outfit] ?? ["aucun"]).includes(o.id);
@@ -33,12 +49,12 @@ function ThumbGroup({ group, config, onPick }) {
     [config, group.key, group.preview, options]
   );
   return (
-    <div className="grid grid--thumbs" role="radiogroup" aria-label={group.label}>
-      {ordered(options, config).map(([o, i]) => {
+    <div className="grid grid--thumbs" role="radiogroup" aria-label={group.label} onKeyDown={radioKeys}>
+      {ordered(options, config).map(([o, i], n) => {
         const selected = config[group.key] === o.id;
         const blocked = incompatible(group, o, config);
         return (
-          <button key={o.id} type="button" role="radio" aria-checked={selected} aria-disabled={blocked || undefined} disabled={blocked} title={blocked ? "Ne va pas avec ce vêtement" : undefined} className="tile" onClick={() => onPick(group.key, o.id)}>
+          <button key={o.id} type="button" role="radio" tabIndex={stop(selected, options.some((x) => x.id === config[group.key]), n === 0)} aria-checked={selected} aria-disabled={blocked || undefined} disabled={blocked} title={blocked ? "Ne va pas avec ce vêtement" : undefined} className="tile" onClick={() => onPick(group.key, o.id)}>
             <span className="tile__art"><Thumb config={previews[i]} crop={group.crop} variant={group.variant ?? "thumb"} /></span>
             <span className="tile__label">{o.label}</span>
           </button>
@@ -54,12 +70,13 @@ function SwatchGroup({ group, config, onPick }) {
   const current = config[group.key];
   const customSelected = isHex(current);
   return (
-    <div className="swatches" role="radiogroup" aria-label={group.label}>
-      {options.map((o) => (
+    <div className="swatches" role="radiogroup" aria-label={group.label} onKeyDown={radioKeys}>
+      {options.map((o, n) => (
         <button
           key={o.id}
           type="button"
           role="radio"
+          tabIndex={stop(current === o.id, options.some((x) => x.id === current), n === 0)}
           aria-checked={current === o.id}
           aria-label={o.label}
           title={o.label}
@@ -85,9 +102,9 @@ function SwatchGroup({ group, config, onPick }) {
 
 function ThemeGroup({ group, config, onPick }) {
   return (
-    <div className="grid grid--themes" role="radiogroup" aria-label={group.label}>
-      {LISTS.theme.map((th) => (
-        <button key={th.id} type="button" role="radio" aria-checked={config.theme === th.id} className="tile" onClick={() => onPick("theme", th.id)}>
+    <div className="grid grid--themes" role="radiogroup" aria-label={group.label} onKeyDown={radioKeys}>
+      {LISTS.theme.map((th, n) => (
+        <button key={th.id} type="button" role="radio" tabIndex={stop(config.theme === th.id, true, n === 0)} aria-checked={config.theme === th.id} className="tile" onClick={() => onPick("theme", th.id)}>
           <span className="tile__art tile__art--theme" style={{ "--wall": th.wall, "--halo": th.halo, "--desk": th.deskTop, "--a": th.a, "--b": th.b }}>
             <i className="theme-halo" /><i className="theme-dot theme-dot--a" /><i className="theme-dot theme-dot--b" /><i className="theme-desk" />
           </span>
@@ -101,11 +118,11 @@ function ThemeGroup({ group, config, onPick }) {
 function Chips({ group, config, onPick }) {
   const options = LISTS[group.key];
   return (
-    <div className="chips" role="radiogroup" aria-label={group.label}>
-      {ordered(options, config).map(([o]) => {
+    <div className="chips" role="radiogroup" aria-label={group.label} onKeyDown={radioKeys}>
+      {ordered(options, config).map(([o], n) => {
         const selected = config[group.key] === o.id;
         return (
-          <button key={o.id} type="button" role="radio" aria-checked={selected} className="chip" onClick={() => onPick(group.key, o.id)}>
+          <button key={o.id} type="button" role="radio" tabIndex={stop(selected, true, n === 0)} aria-checked={selected} className="chip" onClick={() => onPick(group.key, o.id)}>
             {o.label}
           </button>
         );
@@ -117,9 +134,9 @@ function Chips({ group, config, onPick }) {
 function TextGroup({ group, config, onPick }) {
   const options = LISTS[group.key];
   return (
-    <div className={group.compact ? "chips" : "cards"} role="radiogroup" aria-label={group.label}>
-      {options.map((o) => (
-        <button key={o.id} type="button" role="radio" aria-checked={config[group.key] === o.id} className={group.compact ? "chip" : "card"} onClick={() => onPick(group.key, o.id)}>
+    <div className={group.compact ? "chips" : "cards"} role="radiogroup" aria-label={group.label} onKeyDown={radioKeys}>
+      {options.map((o, n) => (
+        <button key={o.id} type="button" role="radio" tabIndex={stop(config[group.key] === o.id, true, n === 0)} aria-checked={config[group.key] === o.id} className={group.compact ? "chip" : "card"} onClick={() => onPick(group.key, o.id)}>
           <span className="card__title">{o.label}</span>
           {!group.compact && o.hint && <span className="card__hint">{o.hint}</span>}
         </button>
@@ -130,9 +147,9 @@ function TextGroup({ group, config, onPick }) {
 
 function CategoryGroup({ config, onApply }) {
   return (
-    <div className="cats" role="radiogroup" aria-label="Univers">
-      {CATEGORIES.map((c) => (
-        <button key={c.id} type="button" role="radio" aria-checked={config.category === c.id} className="cat" style={{ "--tint": c.tint }} onClick={() => onApply({ ...c.patch, category: c.id })}>
+    <div className="cats" role="radiogroup" aria-label="Univers" onKeyDown={radioKeys}>
+      {CATEGORIES.map((c, n) => (
+        <button key={c.id} type="button" role="radio" tabIndex={stop(config.category === c.id, true, n === 0)} aria-checked={config.category === c.id} className="cat" style={{ "--tint": c.tint }} onClick={() => onApply({ ...c.patch, category: c.id })}>
           <span className="cat__title">{c.label}</span>
           <span className="cat__blurb">{c.blurb}</span>
         </button>
@@ -170,7 +187,7 @@ export default function Group({ group, config, onPick, onApply }) {
   return (
     <section className="group">
       <header className="group__head">
-        <h3>{group.label}</h3>
+        <h2>{group.label}</h2>
         {current && <span className="group__value">{current}</span>}
       </header>
       {body}

@@ -38,7 +38,7 @@ function InspirationCard({ item, favorite, onToggleFavorite, onOpen }) {
         className="icard__art"
         onClick={() => onOpen(item)}
         style={{ aspectRatio: `${w} / ${h}` }}
-        aria-label={`Ouvrir l'inspiration « ${item.title} »`}
+        aria-label={`Voir l'inspiration « ${item.title} »`}
       >
         {seen ? <Avatar config={item.config} variant="scene" crop={crop} /> : <span className="skeleton" />}
         <span className="icard__veil" aria-hidden="true">Voir</span>

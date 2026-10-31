@@ -1,5 +1,6 @@
-export const MONO =
-  "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)";
+import { Glyph } from "./Glyph";
+
+export const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 
 // ── Bureau (et tasse) ─────────────────────────────────────────────────────────
 export function Desk({ theme: th }) {
@@ -88,7 +89,9 @@ export function Zzz() {
   return (
     <g className="av-zzz" pointerEvents="none">
       {zs.map(([x, y, size], i) => (
-        <text key={i} className="av-z" style={{ animationDelay: `${-i * 1}s`, fontFamily: MONO }} x={x} y={y} fontSize={size} fontWeight="700" fill="#6C6890">z</text>
+        <g key={i} className="av-z" style={{ animationDelay: `${-i * 1}s` }}>
+          <Glyph text="z" x={x} y={y} size={size} fill="#6C6890" />
+        </g>
       ))}
     </g>
   );

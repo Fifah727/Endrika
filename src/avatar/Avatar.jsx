@@ -51,9 +51,11 @@ function Arm({ outfit, color, skin, theme }) {
         <path d="M330 248 Q339 254 350 247" fill="none" stroke={skin.line} strokeOpacity=".35" strokeWidth="1.6" strokeLinecap="round" />
       </g>
       {sleeve.over}
-      <path className="av-wsp" d="M374 206 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill={theme.a} />
-      <path className="av-wsp" style={{ animationDelay: ".7s" }} d="M356 176 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill={theme.b} />
-      <path className="av-wsp" style={{ animationDelay: "1.2s" }} d="M318 186 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6z" fill={theme.a} />
+      {[[376, 211, "", 1, theme.a], [358, 181, ".7s", 1, theme.b], [319, 190, "1.2s", 0.8, theme.a]].map(([x, y, delay, sc, c]) => (
+        <g key={x} transform={`translate(${x} ${y}) scale(${sc})`}>
+          <path className="av-wsp" style={delay ? { animationDelay: delay } : undefined} d="M0 -9 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6z" fill={c} />
+        </g>
+      ))}
     </g>
   );
 }
@@ -124,7 +126,7 @@ const Avatar = forwardRef(function Avatar(
       aria-hidden={variant === "full" ? undefined : "true"}
     >
       <defs>
-        <WallPattern id={gridId} theme={theme} />
+        {showScene && <WallPattern id={gridId} theme={theme} />}
         <LensClip id={lensId} kind={config.glasses} />
         <clipPath id={cableId}><rect x="0" y="0" width="400" height="366" /></clipPath>
         <clipPath id={cutId}><rect x="-40" y="-40" width="480" height="406" /></clipPath>
@@ -194,4 +196,11 @@ const Avatar = forwardRef(function Avatar(
   );
 });
 
-export default memo(Avatar);
+// Les aperçus de l'éditeur reçoivent un nouvel objet de configuration à chaque modification :
+// on compare les valeurs pour ne redessiner que ceux qui changent vraiment.
+const sameConfig = (a, b) => a === b || (Object.keys(a).length === Object.keys(b).length && Object.keys(a).every((k) => a[k] === b[k]));
+const sameProps = (p, n) =>
+  p.variant === n.variant && p.crop === n.crop && p.forceMotion === n.forceMotion && p.label === n.label &&
+  p.layers?.background === n.layers?.background && p.layers?.plank === n.layers?.plank && sameConfig(p.config, n.config);
+
+export default memo(Avatar, sameProps);

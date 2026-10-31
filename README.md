@@ -66,6 +66,13 @@ src/
 - **Une inspiration** : une ligne `I(...)` dans `src/data/inspirations.js` (n'importe quelle combinaison d'options valides).
 - **Une collection** : une entrée dans `src/data/collections.js`.
 
+## Performance et accessibilité
+
+- Animations allégées : origines de transformation explicites (pas de `fill-box`), symboles décoratifs dessinés en tracés vectoriels (`src/avatar/parts/Glyph.jsx`, plus de texte SVG), reflets de lunettes statiques. Mesuré sur mobile émulé (processeur ralenti 4 fois) : environ 45 % de CPU en moins pendant que l'avatar s'anime.
+- Les aperçus de l'éditeur ne sont dessinés qu'à l'approche de l'écran et ne se redessinent que si leur configuration change vraiment.
+- Plus de police à télécharger pour le texte des SVG ; les exports ne dépendent d'aucune police pour les symboles.
+- Navigation clavier : un seul arrêt de tabulation par groupe d'options, flèches pour changer d'option, lien « Aller au contenu ». Vérifié avec axe-core : aucune violation sur toutes les pages.
+
 ## Cohérence de l'avatar
 
 Les accessoires de cou ne se proposent qu'avec les vêtements qui vont avec (cravate : chemise, blazer, uniforme…), un casque audio ne se porte pas avec un couvre-chef, la toque, le casque de chantier et le mortier reprennent leur couleur naturelle, et les accessoires sont assortis au vêtement par défaut. Le tirage « Aléatoire » respecte ces règles (`harmonize` dans `src/avatar/config.js`).

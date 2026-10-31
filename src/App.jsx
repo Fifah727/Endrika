@@ -70,8 +70,9 @@ export default function App() {
 
   return (
     <div className="app">
+      <a className="skip" href="#main" onClick={(e) => { e.preventDefault(); document.getElementById("main")?.focus(); }}>Aller au contenu</a>
       <Nav route={route} onGo={onNav} count={store.creations.length} />
-      <main id="main">
+      <main id="main" tabIndex={-1}>
         <ErrorBoundary message="Cette page n'a pas pu se charger. Vérifie ta connexion puis réessaie.">
           <Suspense fallback={route.name === "inspirations" ? <div className="gallery"><GallerySkeleton /></div> : <PageSkeleton />}>
             {route.name === "inspirations" && (

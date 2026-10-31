@@ -37,12 +37,15 @@
 .avatar[data-state="hello"] .av-hairback { animation: av-head calc(7s * var(--tempo, 1)) ease-in-out infinite; animation-delay: -6.7s; }
 
 /* ── Micro-animations toujours actives ──────────────────────────────────── */
-.av-eye    { transform-box: fill-box; transform-origin: center; transition: transform 0.12s; }
+.av-eye    { transition: transform 0.12s; }
+.av-eye-l  { transform-origin: 166px 173px; }
+.av-eye-r  { transform-origin: 234px 173px; }
 .av-eye-l,
 .av-eye-r  { animation: av-blink 6s infinite; }
 .av-glint  { animation: av-glint 7s ease-in-out infinite; }
-.av-spark  { transform-box: fill-box; transform-origin: center; animation: av-twinkle 3.2s ease-in-out infinite; }
-.av-line   { transform-box: fill-box; transform-origin: left center; animation: av-type 2.2s ease-in-out infinite; }
+/* l'origine de chaque étincelle est posée en ligne (style) à son propre centre */
+.av-spark  { animation: av-twinkle 3.2s ease-in-out infinite; }
+.av-line   { animation: av-type 2.2s ease-in-out infinite; }
 .av-caret  { animation: av-caret 1s steps(1) infinite; }
 
 /* ══════════════════════════ ÉTAT « CODE » (défaut) ═══════════════════════ */
@@ -79,7 +82,7 @@
   transition: transform 0.45s var(--av-spring);
 }
 .av-hand { transform-origin: 340px 266px; }
-.av-wsp  { opacity: 0; transform-box: fill-box; transform-origin: center; }
+.av-wsp  { opacity: 0; }
 /* bulle cachée */
 .av-bubble {
   transform-origin: 130px 62px;
@@ -264,18 +267,6 @@
 .avatar .av-reflect { transition: opacity 0.3s ease; }
 /* quand elle te regarde, elle ne fixe plus son écran */
 .avatar[data-state="hello"] .av-reflect { opacity: 0; }
-.avatar .av-reflect rect {
-  transform-box: fill-box;
-  transform-origin: 0 50%;
-}
-@keyframes av-reflect-type {
-  0%       { transform: scaleX(0.15); }
-  45%, 100% { transform: scaleX(1); }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .avatar .av-reflect rect { animation: av-reflect-type 2.6s steps(8, end) infinite; }
-}
-.avatar[data-motion="full"] .av-reflect rect { animation: av-reflect-type 2.6s steps(8, end) infinite; }
 
 /* ── Coucou : la main salue en continu tant que l'état « hello » dure ── */
 .avatar[data-state="hello"] .av-hand {
@@ -409,7 +400,7 @@
 .av-key   { animation: av-key 4s ease-in-out infinite; }
 .av-flash { opacity: 0; animation: av-flash 6s ease-in-out infinite; }
 .av-rgb   { animation: av-rgb 2.4s ease-in-out infinite; }
-.av-bar   { transform-box: fill-box; transform-origin: center bottom; animation: av-bar 1.6s ease-in-out infinite; }
+.av-bar   { animation: av-bar 1.6s ease-in-out infinite; }
 .av-neon  { animation: av-neon 4s ease-in-out infinite; }
 
 @keyframes av-write { 0% { stroke-dashoffset: 1; } 60%, 100% { stroke-dashoffset: 0; } }

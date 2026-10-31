@@ -78,6 +78,7 @@ export default function Editor({ seed, onSave, toast, onOpenSaved, onDraft }) {
 
   return (
     <div className="editor">
+      <h1 className="visually-hidden">Créer ton avatar</h1>
       <section className="stage" aria-label="Aperçu de l'avatar">
         <div className="stage__frame"><Avatar config={config} forceMotion label="Aperçu de ton avatar animé" /></div>
         <div className="toolbar" role="toolbar" aria-label="Actions">

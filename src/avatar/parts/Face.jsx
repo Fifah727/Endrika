@@ -204,7 +204,7 @@ export function FaceArt({ kind, skin }) {
     return (
       <g>
         {dots.map(([x, y, c], i) => (
-          <circle key={i} className="av-spark" style={{ animationDelay: `${-i * 0.4}s` }} cx={x} cy={y} r={i % 3 === 0 ? 2 : 1.4} fill={c} />
+          <circle key={i} className="av-spark" style={{ transformOrigin: `${x}px ${y}px`, animationDelay: `${-i * 0.4}s` }} cx={x} cy={y} r={i % 3 === 0 ? 2 : 1.4} fill={c} />
         ))}
       </g>
     );

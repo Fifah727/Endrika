@@ -1,4 +1,4 @@
-import { MONO } from "./Scene";
+import { Glyph } from "./Glyph";
 
 // ── Motifs du mur (un par ambiance) ──────────────────────────────────────────
 export function WallPattern({ id, theme: th }) {
@@ -155,7 +155,7 @@ export function WallItem({ kind, theme: th }) {
           {bulbs.map(([x, y], i) => (
             <g key={x}>
               <path d={`M${x} ${y} v6`} stroke={th.orbit} strokeWidth="1.4" />
-              <circle cx={x} cy={y + 11} r="9" fill={cols[i % 3]} opacity=".22" className="av-spark" style={{ animationDelay: `${-i * 0.5}s` }} />
+              <circle cx={x} cy={y + 11} r="9" fill={cols[i % 3]} opacity=".22" className="av-spark" style={{ transformOrigin: `${x}px ${y + 11}px`, animationDelay: `${-i * 0.5}s` }} />
               <circle cx={x} cy={y + 11} r="5" fill={cols[i % 3]} />
               <circle cx={x - 1.4} cy={y + 9} r="1.6" fill="#fff" opacity=".7" />
             </g>
@@ -182,7 +182,7 @@ export function WallItem({ kind, theme: th }) {
             <path d="M362 124 L376 98 L390 124 Z" />
             <path d="M376 98 V124" strokeDasharray="2 3" />
           </g>
-          <text x="324" y="136" fontSize="9" fill="#F1EEE4" opacity=".9" style={{ fontFamily: MONO }}>x²+y²</text>
+          <Glyph text="x²+y²" x={324} y={136} size={9} fill="#F1EEE4" opacity={0.9} />
           <rect x="318" y="148" width="80" height="5" rx="1.6" fill="#B98C5C" />
           <rect x="330" y="145" width="10" height="3.6" rx="1.6" fill="#F7F3EA" />
         </g>
@@ -202,13 +202,13 @@ export function CardItem({ kind, theme: th }) {
           <rect x="16" y="90" width="80" height="70" rx="8" fill="#000" opacity=".14" />
           <rect x="12" y="86" width="80" height="70" rx="8" fill="#26231F" />
           <rect x="12.5" y="86.5" width="79" height="69" rx="7.5" fill="none" stroke="#3D3832" />
-          <text x="50" y="99.4" fontSize="6.5" fill="#A39B8C" style={{ fontFamily: MONO }}>app.jsx</text>
+          <Glyph text="app.jsx" x={50} y={99.4} size={6.5} fill="#A39B8C" />
           <circle cx="23" cy="97" r="2.5" fill="#C47A63" /><circle cx="31" cy="97" r="2.5" fill="#D9B26A" /><circle cx="39" cy="97" r="2.5" fill="#8FA895" />
           <rect x="12" y="105" width="80" height="1" fill="#3D3832" />
-          <rect className="av-line" x="21" y="112" width="40" height="4" rx="2" fill="#E0937D" />
-          <rect className="av-line" x="27" y="122" width="52" height="4" rx="2" fill="#F1EBDD" opacity=".8" style={{ animationDelay: ".4s" }} />
-          <rect className="av-line" x="27" y="132" width="34" height="4" rx="2" fill="#A8D5BB" style={{ animationDelay: ".8s" }} />
-          <rect className="av-line" x="21" y="142" width="24" height="4" rx="2" fill="#8FB09B" style={{ animationDelay: "1.2s" }} />
+          <rect className="av-line" style={{ transformOrigin: "21px 114px" }} x="21" y="112" width="40" height="4" rx="2" fill="#E0937D" />
+          <rect className="av-line" x="27" y="122" width="52" height="4" rx="2" fill="#F1EBDD" opacity=".8" style={{ transformOrigin: "27px 124px", animationDelay: ".4s" }} />
+          <rect className="av-line" x="27" y="132" width="34" height="4" rx="2" fill="#A8D5BB" style={{ transformOrigin: "27px 134px", animationDelay: ".8s" }} />
+          <rect className="av-line" x="21" y="142" width="24" height="4" rx="2" fill="#8FB09B" style={{ transformOrigin: "21px 144px", animationDelay: "1.2s" }} />
           <rect className="av-caret" x="50" y="141" width="4" height="6" fill="#A8D5BB" />
         </>
       );
@@ -226,7 +226,7 @@ export function CardItem({ kind, theme: th }) {
           <path d="M20 112 C16 90 48 78 74 86 C96 93 100 118 86 130 C78 137 66 130 62 138 C56 150 34 152 24 140 C14 130 20 122 20 112 Z" fill="#E9D8B4" stroke="#BFA575" strokeWidth="1.6" />
           <circle cx="36" cy="124" r="5" fill="#BFA575" opacity=".55" />
           {[[34, 104, th.b], [48, 96, th.c], [64, 96, th.a], [78, 106, "#8D7BD8"], [76, 120, "#2F4468"]].map(([x, y, c], i) => (
-            <circle key={i} cx={x} cy={y} r="6.4" fill={c} className="av-spark" style={{ animationDuration: "4s", animationDelay: `${-i * 0.7}s` }} />
+            <circle key={i} cx={x} cy={y} r="6.4" fill={c} className="av-spark" style={{ transformOrigin: `${x}px ${y}px`, animationDuration: "4s", animationDelay: `${-i * 0.7}s` }} />
           ))}
           <g transform="rotate(-28 70 140)"><rect x="46" y="137" width="48" height="5" rx="2.5" fill="#9C7E58" /><path d="M94 137 L104 139.5 L94 142 Z" fill={th.b} /></g>
         </>
@@ -238,7 +238,7 @@ export function CardItem({ kind, theme: th }) {
           <rect x="12" y="86" width="80" height="70" rx="8" fill="#FBF8F0" stroke="#D9D2C2" />
           <g stroke="#E2DCCB" strokeWidth="1"><path d="M22 110 H84 M22 126 H84 M22 142 H84" /></g>
           {[[24, 34, th.a], [38, 24, th.b], [52, 40, th.a], [66, 18, th.c]].map(([x, h, c], i) => (
-            <rect key={x} className="av-bar" style={{ animationDelay: `${-i * 0.5}s` }} x={x} y={146 - h} width="10" height={h} rx="2" fill={c} />
+            <rect key={x} className="av-bar" style={{ transformOrigin: `${x + 5}px 146px`, animationDelay: `${-i * 0.5}s` }} x={x} y={146 - h} width="10" height={h} rx="2" fill={c} />
           ))}
           <path d="M26 128 L44 120 L60 130 L82 104" fill="none" stroke="#2B2824" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           <rect x="22" y="94" width="26" height="4" rx="2" fill="#2B2824" opacity=".7" />
@@ -255,11 +255,11 @@ export function CardItem({ kind, theme: th }) {
           <rect x="56" y="107" width="20" height="3.4" rx="1.7" fill="#A39B8C" />
           <g fill={th.a}>
             {[0, 1, 2, 3, 4].map((i) => (
-              <rect key={i} className="av-bar" style={{ animationDelay: `${-i * 0.28}s` }} x={58 + i * 5.4} y="112" width="3.4" height="12" rx="1.7" />
+              <rect key={i} className="av-bar" style={{ transformOrigin: `${59.7 + i * 5.4}px 124px`, animationDelay: `${-i * 0.28}s` }} x={58 + i * 5.4} y="112" width="3.4" height="12" rx="1.7" />
             ))}
           </g>
           <rect x="20" y="136" width="64" height="3.4" rx="1.7" fill="#3D3832" />
-          <rect className="av-line" x="20" y="136" width="40" height="3.4" rx="1.7" fill={th.a} />
+          <rect className="av-line" style={{ transformOrigin: "20px 137.7px" }} x="20" y="136" width="40" height="3.4" rx="1.7" fill={th.a} />
           <g fill="#F1EBDD"><path d="M36 146 l8 4.4 l-8 4.4z" /><rect x="52" y="146" width="3" height="8.8" rx="1" /><rect x="58" y="146" width="3" height="8.8" rx="1" /></g>
         </>
       );
@@ -275,8 +275,11 @@ const spark = "M0 -9 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 
 
 export function Floaters({ kind, theme: th }) {
   const fl = (i, extra) => ({ className: "av-float", style: { animationDelay: `${-i * 1.7}s`, ...extra } });
+  // Symboles dessinés en tracés vectoriels (voir Glyph.jsx) : aucun texte SVG à remettre en page.
   const text = (x, y, s, size, c, i) => (
-    <text {...fl(i)} x={x} y={y} fontSize={size} fontWeight="700" fill={c} style={{ fontFamily: MONO, animationDelay: `${-i * 1.7}s` }}>{s}</text>
+    <g {...fl(i)}>
+      <Glyph text={s} x={x} y={y} size={size} fill={c} />
+    </g>
   );
   // L'animation CSS remplace l'attribut transform : on place l'étoile dans un groupe parent.
   const sparkAt = (x, y, c, i, sc = 1) => (

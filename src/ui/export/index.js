@@ -59,9 +59,32 @@ function standaloneClone(svg, { size, bg, color, animated }) {
   return clone;
 }
 
-const withStyle = (clone) => {
+/** Retire les blocs @keyframes et @media (en comptant les accolades imbriquées) et les commentaires. */
+function stripAtRules(css) {
+  let out = "";
+  let i = 0;
+  while (i < css.length) {
+    if (css.startsWith("@keyframes", i) || css.startsWith("@media", i)) {
+      let depth = 1;
+      i = css.indexOf("{", i) + 1;
+      while (i < css.length && depth > 0) {
+        if (css[i] === "{") depth++;
+        else if (css[i] === "}") depth--;
+        i++;
+      }
+    } else out += css[i++];
+  }
+  return out.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ");
+}
+
+// Une image fixe n'a besoin ni des animations ni des cas « réduire les animations » :
+// son CSS est ~2,5 fois plus léger, donc plus rapide à écrire et à lire.
+let frameCssCache = null;
+const frameCss = () => (frameCssCache ??= stripAtRules(avatarCss));
+
+const withStyle = (clone, css = avatarCss) => {
   const style = document.createElementNS(XMLNS, "style");
-  style.textContent = avatarCss;
+  style.textContent = css;
   clone.insertBefore(style, clone.firstChild);
   return clone;
 };
@@ -116,7 +139,10 @@ async function createRenderer(config, { size, bg, color, duration, fps, frames }
   canvas.height = size;
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-  const renderAt = async (ms) => {
+  // Étape 1 (synchrone) : fige les animations à l'instant `ms` et lance le décodage de l'image.
+  // L'état est photographié tout de suite : on peut donc préparer l'image suivante pendant
+  // que l'image courante est encodée (GIF, MP4), sans que les deux se gênent.
+  const decodeAt = (ms) => {
     for (const l of live) l.a.currentTime = l.freeze ? 0 : ms;
     const snapshot = targets.map((el) => {
       const cs = getComputedStyle(el);
@@ -132,14 +158,21 @@ async function createRenderer(config, { size, bg, color, duration, fps, frames }
       el.style.opacity = opacity;
       if (dash && dash !== "auto") el.style.strokeDashoffset = dash;
     }
-    const xml = serialize(withStyle(clone));
+    const xml = serialize(withStyle(clone, frameCss()));
+    const url = URL.createObjectURL(new Blob([xml], { type: "image/svg+xml" }));
     const img = new Image();
-    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xml)}`;
-    try {
-      await img.decode();
-    } catch {
-      throw new ExportError("Ce navigateur n'a pas réussi à dessiner l'image.");
-    }
+    img.src = url;
+    return img
+      .decode()
+      .then(() => img)
+      .catch(() => {
+        throw new ExportError("Ce navigateur n'a pas réussi à dessiner l'image.");
+      })
+      .finally(() => URL.revokeObjectURL(url));
+  };
+
+  // Étape 2 : dessine l'image décodée sur le canvas partagé.
+  const draw = (img) => {
     ctx.clearRect(0, 0, size, size);
     if (bg === "scene" || bg === "color") {
       ctx.fillStyle = bg === "color" ? color : "#ffffff";
@@ -149,11 +182,19 @@ async function createRenderer(config, { size, bg, color, duration, fps, frames }
     return canvas;
   };
 
+  let ahead = null; // { i, promise } : image suivante déjà en cours de décodage
+  const renderFrame = async (i) => {
+    const img = await (ahead && ahead.i === i ? ahead.promise : decodeAt((i / fps) * 1000));
+    ahead = i + 1 < frames ? { i: i + 1, promise: decodeAt(((i + 1) / fps) * 1000) } : null;
+    ahead?.promise.catch(() => {}); // l'erreur éventuelle remonte quand on attend cette image
+    return draw(img);
+  };
+
   return {
     canvas,
     count: frames,
-    renderFrame: (i) => renderAt((i / fps) * 1000),
-    renderPoster: () => renderAt(loopMs * 0.22),
+    renderFrame,
+    renderPoster: async () => draw(await decodeAt(loopMs * 0.22)),
     dispose: () => mount.dispose(),
   };
 }
